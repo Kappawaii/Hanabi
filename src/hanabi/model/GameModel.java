@@ -5,17 +5,16 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.Objects;
 
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
 
 public class GameModel {
 
-	TerminalView view;
-	TerminalController controller;
+	private TerminalView view;
+	private TerminalController controller;
+	private InteractionManager interactionManager;
 
 	private ArrayList<Player> players;
 	private HashMap<CardColor, Integer> fireworkStatus;
@@ -27,10 +26,11 @@ public class GameModel {
 	private int fuseTokens;
 
 	public GameModel(InputStream inputStream, PrintStream printStream) {
-		view = new TerminalView(printStream);
-		controller = new TerminalController(inputStream);
+		view = new TerminalView(Objects.requireNonNull(printStream));
+		controller = new TerminalController(Objects.requireNonNull(inputStream));
+		interactionManager = new InteractionManager(controller, view);
 		players = new ArrayList<Player>();
-		playerCount = getPlayerCount(2, 8);
+		playerCount = interactionManager.getPlayerCount(2, 8);
 		addPlayers();
 		infoTokens = 8;
 		fuseTokens = 3;
@@ -58,7 +58,8 @@ public class GameModel {
 			view.splashScreen(p);
 			controller.waitForLineBreak();
 			displayCardsOfAllPlayersBut(p);
-			displayFireworkStatus(fireworkStatus);
+			view.displayFireworkStatus(fireworkStatus);
+			view.displayTokensRemaining();
 			p.playTurn();
 			if (instantVictoryState()) {
 				return 1;
@@ -69,15 +70,6 @@ public class GameModel {
 			 */
 		}
 		return 0;
-	}
-
-	private void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2) {
-		StringBuilder stringBuilder = new StringBuilder("État du feu d'artifice :");
-		for (Entry<CardColor, Integer> entry : fireworkStatus2.entrySet()) {
-			stringBuilder.append("\nCouleur ").append(entry.getKey().toString()).append(" : ").append(entry.getValue());
-		}
-		stringBuilder.append("\n");
-		view.printString(stringBuilder.toString());
 	}
 
 	private void initNewgame() {
@@ -104,19 +96,9 @@ public class GameModel {
 	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
 		for (Player player : players) {
 			if (player != playerNotToDisplay) {
-				displayCardsOfPlayer(player);
+				view.displayCardsOfPlayer(player);
 			}
 		}
-
-	}
-
-	private void displayCardsOfPlayer(Player player) {
-		StringBuilder stringBuilder = new StringBuilder("Cartes de " + player.getName() + " :\n");
-		for (Card c : player.getCards()) {
-			stringBuilder.append(c.toString()).append(" ; ");
-		}
-		stringBuilder.append("\n");
-		view.printString(stringBuilder.toString());
 	}
 
 	private boolean instantVictoryState() {
@@ -130,8 +112,13 @@ public class GameModel {
 	}
 
 	public boolean playCard() {
+		// TODO
 		return false;
+	}
 
+	public void discardCard(Card c) {
+		discardedCards.add(c);
+		infoTokens++;
 	}
 
 	public boolean giveInformationToPlayer(Player p, String msg) {
@@ -143,32 +130,10 @@ public class GameModel {
 		return false;
 	}
 
-	private Player getPlayerByName(String name) {
-		for (Player p : players) {
-			if (p.getName().equals(name)) {
-				return p;
-			}
-		}
-		return null;
-	}
-
-	/*
-	 * Doesn't let the user select the Player given as parameter
-	 */
-	protected Player selectPlayer(Player playerNotToSelect) {
-		view.printString("Tapez le nom du joueur");
-		Predicate<String> p = (playerName) -> playerName == null || playerName.isBlank()
-				|| getPlayerByName(playerName) == null || playerNotToSelect.getName().equals(playerName);
-		Supplier<String> s = () -> controller.getString();
-		return getPlayerByName(doMethodWhilePredicateSatisfied(p, s,
-				"Tapez le nom du joueur auquel vous voulez envoyer une information"));
-
-	}
-
 	private void addPlayers() {
 		int i = 0;
 		while (i < playerCount) {
-			Player temp = new Player(this, getPlayerName(i), controller, view);
+			Player temp = new Player(this, interactionManager.getPlayerName(i), controller, view, interactionManager);
 			if (!players.contains(temp)) {
 				players.add(temp);
 				i++;
@@ -195,32 +160,12 @@ public class GameModel {
 		return deck;
 	}
 
-	private String getPlayerName(int playerNumber) {
-		Predicate<String> p = (name) -> (name == null || name.isBlank());
-		Supplier<String> s = () -> controller.getString();
-		return doMethodWhilePredicateSatisfied(p, s, "Entrez le nom du Joueur n°" + (playerNumber + 1));
-	}
-
-	private int getPlayerCount(int minPlayers, int maxPlayers) {
-		Predicate<Integer> p = (i) -> (i == null || i < minPlayers || i > maxPlayers);
-		Supplier<Integer> s = () -> controller.getInt();
-		return doMethodWhilePredicateSatisfied(p, s,
-				"Entrez le nombre de joueurs (entre " + minPlayers + " et " + maxPlayers + ")");
-	}
-
-	/*
-	 * Intended for user input validation
-	 */
-	protected <T> T doMethodWhilePredicateSatisfied(Predicate<T> predicate, Supplier<T> s, String message) {
-		T temp;
-		do {
-			view.printString(message);
-			temp = s.get();
-		} while (predicate.test(temp));
-		return temp;
-	}
-
 	public int getInfoTokens() {
 		return infoTokens;
 	}
+
+	public ArrayList<Player> getPlayerList() {
+		return players;
+	}
+
 }

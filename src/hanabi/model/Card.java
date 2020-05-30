@@ -1,5 +1,7 @@
 package hanabi.model;
 
+import java.util.Objects;
+
 public class Card {
 	private int number;
 	private CardColor color;
@@ -8,10 +10,10 @@ public class Card {
 
 	public Card(int number, CardColor color) {
 		if (number < 1 || number > 5) {
-			throw new IllegalStateException("number must be between 1 and 5");
+			throw new IllegalArgumentException("number must be between 1 and 5");
 		}
 		this.number = number;
-		this.color = color;
+		this.color = Objects.requireNonNull(color);
 		revealedForPlayer = false;
 	}
 

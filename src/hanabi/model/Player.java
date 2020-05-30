@@ -1,11 +1,7 @@
 package hanabi.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
@@ -17,11 +13,14 @@ public class Player {
 	private TerminalController controller;
 	private TerminalView view;
 	private ArrayList<String> intelReceived;
+	private InteractionManager interactionManager;
 
-	public Player(GameModel game, String name, TerminalController controller, TerminalView view) {
-		this.game = game;
-		this.controller = controller;
-		this.view = view;
+	public Player(GameModel game, String name, TerminalController controller, TerminalView view,
+			InteractionManager interactionManager) {
+		this.interactionManager = interactionManager;
+		this.game = Objects.requireNonNull(game);
+		this.controller = Objects.requireNonNull(controller);
+		this.view = Objects.requireNonNull(view);
 		this.name = Objects.requireNonNull(name, "name must not be null");
 		this.cards = new ArrayList<Card>();
 		intelReceived = new ArrayList<String>();
@@ -31,7 +30,7 @@ public class Player {
 		if (intelReceived.size() != 0) {
 			displayInformation();
 		}
-		switch (getAction()) {
+		switch (interactionManager.getAction(name)) {
 		case "information":
 			if (game.getInfoTokens() < 1) {
 				view.printString("Jetons d'informations épuisés");
@@ -49,36 +48,21 @@ public class Player {
 		}
 	}
 
-	private String getAction() {
-		List<String> possibleActionList = Arrays.asList("information", "jeter", "jouer");
-		Predicate<String> predicate = (
-				action) -> (action == null || action.isBlank() || !possibleActionList.contains(action));
-		Supplier<String> supplier = () -> controller.getString();
-		return game.doMethodWhilePredicateSatisfied(predicate, supplier,
-				name + ", que voulez vous faire ?\n"
-						+ "Tapez 'information' pour envoyer une information à un autre joueur\n"
-						+ "Tapez 'jeter' pour vous défausser d'une carte et récupérer un jeton d'information\n"
-						+ "Tapez 'jouer' pour jouer une carte\n");
-	}
-
 	public void addIntel(String msg) {
 		intelReceived.add(msg);
 	}
 
-	private Card selectCard(String basemsg) {
-		Predicate<Integer> predicate = (input) -> (input == null || input < 0 || input > cards.size() - 1);
-		Supplier<Integer> supplier = () -> controller.getInt() - 1;
-		return cards.get(game.doMethodWhilePredicateSatisfied(predicate, supplier, basemsg + cardListAsString()));
-	}
-
 	private void giveInformation() {
-		Player target = game.selectPlayer(this);
+		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
 		view.printString("Entrez le message à envoyer à " + target.name);
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
 	private void discardCard() {
-		cards.remove(selectCard("Choisissez la carte à défausser :\n"));
+		Card c = interactionManager.selectCard("Choisissez la carte à défausser :\n", cards);
+		if (cards.remove(c)) {
+			game.discardCard(c);
+		}
 	}
 
 	private void displayInformation() {
@@ -91,14 +75,6 @@ public class Player {
 
 	private void playCard() {
 
-	}
-
-	private String cardListAsString() {
-		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0; i < cards.size(); i++) {
-			stringBuilder.append(i + 1).append(" : ").append(cards.get(i - 1));
-		}
-		return stringBuilder.toString();
 	}
 
 	public String getName() {

@@ -1,8 +1,12 @@
 package hanabi.terminal;
 
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Objects;
 
+import hanabi.model.Card;
+import hanabi.model.CardColor;
 import hanabi.model.Player;
 
 public class TerminalView {
@@ -36,7 +40,8 @@ public class TerminalView {
 	 */
 	public void splashScreen(Player p) {
 		StringBuilder strBuilder = new StringBuilder();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 50; i++) {
+			strBuilder.append("MONTER C'EST TRICHER****************MONTER C'EST TRICHER\n");
 			strBuilder.append("******************MONTER C'EST TRICHER******************\n");
 		}
 		for (int i = 0; i < 100; i++) {
@@ -44,5 +49,27 @@ public class TerminalView {
 		}
 		printString(strBuilder.toString());
 		printString("C'est le tour de " + p.getName() + " !\nAppuyez sur Entrée pour commencer votre tour");
+	}
+
+	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2) {
+		StringBuilder stringBuilder = new StringBuilder("État du feu d'artifice :");
+		for (Entry<CardColor, Integer> entry : fireworkStatus2.entrySet()) {
+			stringBuilder.append("\nCouleur ").append(entry.getKey().toString()).append(" : ").append(entry.getValue());
+		}
+		stringBuilder.append("\n");
+		printString(stringBuilder.toString());
+	}
+
+	public void displayCardsOfPlayer(Player player) {
+		StringBuilder stringBuilder = new StringBuilder("Cartes de " + player.getName() + " :\n");
+		for (Card c : player.getCards()) {
+			stringBuilder.append(c.toString()).append(" ; ");
+		}
+		stringBuilder.append("\n");
+		printString(stringBuilder.toString());
+	}
+
+	public void displayTokensRemaining() {
+
 	}
 }
