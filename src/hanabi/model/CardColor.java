@@ -1,4 +1,4 @@
-package hanabi;
+package hanabi.model;
 
 public enum CardColor {
        green, 

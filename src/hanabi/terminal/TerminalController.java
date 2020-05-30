@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class TerminalController {
 
+	@SuppressWarnings("unused")
 	private InputStream inStream;
 	private Scanner scanner;
 
@@ -31,6 +32,15 @@ public class TerminalController {
 	 */
 	public String getString() {
 		return scanner.nextLine();
+	}
+
+	/*
+	 * Returns when line break is scanned on inStream
+	 * 
+	 * Doesn't return any value
+	 */
+	public void waitForLineBreak() {
+		scanner.nextLine();
 	}
 
 }

@@ -1,9 +1,12 @@
 package hanabi;
 
+import hanabi.model.GameModel;
+
 public class Main {
 
 	public static void main(String[] args) {
-		Game g = new Game(System.in, System.out);
+		GameModel game = new GameModel(System.in, System.out);
+		game.playOneGame();
 	}
 
 }
