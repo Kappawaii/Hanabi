@@ -58,6 +58,13 @@ public class Player {
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
+	private void playCard() {
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à jouer :\n", cards);
+		if (cards.remove(c)) {
+			game.discardCard(c);
+		}
+	}
+
 	private void discardCard() {
 		Card c = interactionManager.selectCard("Choisissez la carte à défausser :\n", cards);
 		if (cards.remove(c)) {
@@ -71,10 +78,6 @@ public class Player {
 			strBuilder.append(s).append("\n");
 		}
 		view.printString(strBuilder.toString());
-	}
-
-	private void playCard() {
-
 	}
 
 	public String getName() {

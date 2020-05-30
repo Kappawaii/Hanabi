@@ -59,7 +59,7 @@ public class GameModel {
 			controller.waitForLineBreak();
 			displayCardsOfAllPlayersBut(p);
 			view.displayFireworkStatus(fireworkStatus);
-			view.displayTokensRemaining();
+			view.displayTokensRemaining(infoTokens, fuseTokens);
 			p.playTurn();
 			if (instantVictoryState()) {
 				return 1;

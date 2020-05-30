@@ -1,6 +1,7 @@
 package hanabi.terminal;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -69,7 +70,21 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
-	public void displayTokensRemaining() {
+	public void displayTokensRemaining(int informationTokens, int fuseTokens) {
+		printString("Jetons restants : \nJetons d'information : " + informationTokens + "\nJetons d'erreur : "
+				+ fuseTokens + " \n");
+	}
+
+	public void displayOwnCards(ArrayList<Card> cards) {
+		StringBuilder stringBuilder = new StringBuilder("Vos cartes :\n");
+		for (Card c : cards) {
+			stringBuilder.append("* ");
+		}
+		for (int i = 0; i < cards.size(); i++) {
+			stringBuilder.append(i + " ");
+		}
+		stringBuilder.append("\n\n");
+		printString(stringBuilder.toString());
 
 	}
 }

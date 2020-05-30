@@ -65,6 +65,11 @@ public class InteractionManager {
 				basemsg + UtilityFunctions.cardListAsString(cards)));
 	}
 
+	Card selectCardInOwnCards(String basemsg, ArrayList<Card> cards) {
+		view.displayOwnCards(cards);
+		return selectCard(basemsg, cards);
+	}
+
 	/*
 	 * Intended for user input validation
 	 */

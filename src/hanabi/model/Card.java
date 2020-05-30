@@ -5,8 +5,6 @@ import java.util.Objects;
 public class Card {
 	private int number;
 	private CardColor color;
-	private boolean revealedForPlayer;
-	// score ?
 
 	public Card(int number, CardColor color) {
 		if (number < 1 || number > 5) {
@@ -14,7 +12,6 @@ public class Card {
 		}
 		this.number = number;
 		this.color = Objects.requireNonNull(color);
-		revealedForPlayer = false;
 	}
 
 	public int getNumber() {
@@ -23,14 +20,6 @@ public class Card {
 
 	public CardColor getColor() {
 		return color;
-	}
-
-	public boolean getRevealed() {
-		return revealedForPlayer;
-	}
-
-	public void setRevealed() {
-		revealedForPlayer = true;
 	}
 
 	@Override
