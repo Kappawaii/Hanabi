@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -17,7 +18,7 @@ public class GameModel {
 	TerminalController controller;
 
 	private ArrayList<Player> players;
-	private HashMap<CardColor, Integer> cardsPlayed;
+	private HashMap<CardColor, Integer> fireworkStatus;
 	private ArrayList<Card> discardedCards;
 	private int playerCount;
 
@@ -57,6 +58,7 @@ public class GameModel {
 			view.splashScreen(p);
 			controller.waitForLineBreak();
 			displayCardsOfAllPlayersBut(p);
+			displayFireworkStatus(fireworkStatus);
 			p.playTurn();
 			if (instantVictoryState()) {
 				return 1;
@@ -69,10 +71,19 @@ public class GameModel {
 		return 0;
 	}
 
+	private void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2) {
+		StringBuilder stringBuilder = new StringBuilder("État du feu d'artifice :");
+		for (Entry<CardColor, Integer> entry : fireworkStatus2.entrySet()) {
+			stringBuilder.append("\nCouleur ").append(entry.getKey().toString()).append(" : ").append(entry.getValue());
+		}
+		stringBuilder.append("\n");
+		view.printString(stringBuilder.toString());
+	}
+
 	private void initNewgame() {
-		cardsPlayed = new HashMap<CardColor, Integer>();
+		fireworkStatus = new HashMap<CardColor, Integer>();
 		for (CardColor color : CardColor.values()) {
-			cardsPlayed.put(color, 0);
+			fireworkStatus.put(color, 0);
 		}
 		discardedCards = new ArrayList<Card>();
 		cards = generateNewCardSet();
@@ -111,7 +122,7 @@ public class GameModel {
 	private boolean instantVictoryState() {
 		for (CardColor cardcolor : CardColor.values()) {
 			// if any '5' card hasn't been played, instantVictoryState returns false
-			if (cardsPlayed.get(cardcolor) != 5) {
+			if (fireworkStatus.get(cardcolor) != 5) {
 				return false;
 			}
 		}
