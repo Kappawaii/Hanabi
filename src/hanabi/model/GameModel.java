@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -17,7 +17,8 @@ public class GameModel {
 	TerminalController controller;
 
 	private ArrayList<Player> players;
-	private Dictionary<CardColor, Integer> cardsPlayed;
+	private HashMap<CardColor, Integer> cardsPlayed;
+	private ArrayList<Card> discardedCards;
 	private int playerCount;
 
 	private ArrayList<Card> cards;
@@ -28,16 +29,14 @@ public class GameModel {
 		view = new TerminalView(printStream);
 		controller = new TerminalController(inputStream);
 		players = new ArrayList<Player>();
-
 		playerCount = getPlayerCount(2, 8);
-		cards = generateNewCardSet();
-		Collections.shuffle(cards);
 		addPlayers();
 		infoTokens = 8;
 		fuseTokens = 3;
 	}
 
 	public void playOneGame() {
+		initNewgame();
 		while (fuseTokens > 0) {
 			switch (oneTurn()) {
 			case 1:
@@ -55,13 +54,58 @@ public class GameModel {
 
 	public int oneTurn() {
 		for (Player p : players) {
+			view.splashScreen(p);
+			controller.waitForLineBreak();
+			displayCardsOfAllPlayersBut(p);
 			p.playTurn();
 			if (instantVictoryState()) {
 				return 1;
 			}
-			// TODO check defeat (return -1)
+			// TODO check defeat
+			/*
+			 * if (something) { return -1; }
+			 */
 		}
 		return 0;
+	}
+
+	private void initNewgame() {
+		cardsPlayed = new HashMap<CardColor, Integer>();
+		for (CardColor color : CardColor.values()) {
+			cardsPlayed.put(color, 0);
+		}
+		discardedCards = new ArrayList<Card>();
+		cards = generateNewCardSet();
+		System.out.println(cards.size() + "...........");
+		shuffleAndDistributeCards(cards, players);
+	}
+
+	private void shuffleAndDistributeCards(ArrayList<Card> cards, ArrayList<Player> players) {
+		Collections.shuffle(cards);
+		for (Player p : players) {
+			for (int i = 0; i < 5; i++) {
+				Card c = cards.remove(cards.size() - 1);
+				p.getCards().add(c);
+			}
+		}
+	}
+
+	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
+		for (Player player : players) {
+			if (player != playerNotToDisplay) {
+				displayCardsOfPlayer(player);
+			}
+		}
+
+	}
+
+	private void displayCardsOfPlayer(Player player) {
+		StringBuilder stringBuilder = new StringBuilder("Cartes de " + player.getName() + " :\n");
+		for (Card c : player.getCards()) {
+			stringBuilder.append(c.toString()).append(" ; ");
+		}
+		stringBuilder.append("\n");
+		view.printString(stringBuilder.toString());
 	}
 
 	private boolean instantVictoryState() {
@@ -97,10 +141,13 @@ public class GameModel {
 		return null;
 	}
 
-	protected Player selectPlayer() {
+	/*
+	 * Doesn't let the user select the Player given as parameter
+	 */
+	protected Player selectPlayer(Player playerNotToSelect) {
 		view.printString("Tapez le nom du joueur");
 		Predicate<String> p = (playerName) -> playerName == null || playerName.isBlank()
-				|| getPlayerByName(playerName) == null;
+				|| getPlayerByName(playerName) == null || playerNotToSelect.getName().equals(playerName);
 		Supplier<String> s = () -> controller.getString();
 		return getPlayerByName(doMethodWhilePredicateSatisfied(p, s,
 				"Tapez le nom du joueur auquel vous voulez envoyer une information"));

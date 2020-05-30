@@ -28,6 +28,9 @@ public class Player {
 	}
 
 	public void playTurn() {
+		if (intelReceived.size() != 0) {
+			displayInformation();
+		}
 		switch (getAction()) {
 		case "information":
 			if (game.getInfoTokens() < 1) {
@@ -62,26 +65,32 @@ public class Player {
 		intelReceived.add(msg);
 	}
 
-	private Card selectCard() {
+	private Card selectCard(String basemsg) {
 		Predicate<Integer> predicate = (input) -> (input == null || input < 0 || input > cards.size() - 1);
 		Supplier<Integer> supplier = () -> controller.getInt() - 1;
-		return cards.get(game.doMethodWhilePredicateSatisfied(predicate, supplier, cardListAsString()));
+		return cards.get(game.doMethodWhilePredicateSatisfied(predicate, supplier, basemsg + cardListAsString()));
 	}
 
 	private void giveInformation() {
-		Player target = game.selectPlayer();
+		Player target = game.selectPlayer(this);
 		view.printString("Entrez le message à envoyer à " + target.name);
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
-	private boolean discardCard() {
-		// TODO
+	private void discardCard() {
+		cards.remove(selectCard("Choisissez la carte à défausser :\n"));
+	}
 
-		return cards.remove(null);
+	private void displayInformation() {
+		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :\n");
+		for (String s : intelReceived) {
+			strBuilder.append(s).append("\n");
+		}
+		view.printString(strBuilder.toString());
 	}
 
 	private void playCard() {
-		// TODO
+
 	}
 
 	private String cardListAsString() {
