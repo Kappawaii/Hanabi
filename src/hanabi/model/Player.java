@@ -61,7 +61,8 @@ public class Player {
 	private void playCard() {
 		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à jouer :\n", cards);
 		if (cards.remove(c)) {
-			game.discardCard(c);
+			game.playCard(c);
+			// TODO : get new card
 		}
 	}
 
