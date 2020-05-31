@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import hanabi.model.Card;
-import hanabi.model.CardColor;
 import hanabi.model.Player;
+import hanabi.model.card.Card;
+import hanabi.model.card.CardColor;
 
 public class TerminalView {
 
@@ -19,7 +19,7 @@ public class TerminalView {
 		splashScreen();
 	}
 
-	/*
+	/**
 	 * Prints the splash screen on the PrintStream given at construct time
 	 */
 	public void splashScreen() {
@@ -28,7 +28,7 @@ public class TerminalView {
 		outStream.println("****************************************");
 	}
 
-	/*
+	/**
 	 * Prints a string with a line separator on the PrintStream given at construct
 	 * time
 	 */
@@ -36,7 +36,7 @@ public class TerminalView {
 		outStream.println(str);
 	}
 
-	/*
+	/**
 	 * Makes a splash screen intented to be displayed just before the player's turn
 	 */
 	public void splashScreen(Player p) {
@@ -52,6 +52,9 @@ public class TerminalView {
 		printString("C'est le tour de " + p.getName() + " !\nAppuyez sur Entrée pour commencer votre tour");
 	}
 
+	/**
+	 * Displays the firework status
+	 */
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2) {
 		StringBuilder stringBuilder = new StringBuilder("État du feu d'artifice :");
 		for (Entry<CardColor, Integer> entry : fireworkStatus2.entrySet()) {
@@ -61,6 +64,9 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
+	/**
+	 * Displays the player's cards
+	 */
 	public void displayCardsOfPlayer(Player player) {
 		StringBuilder stringBuilder = new StringBuilder("Cartes de " + player.getName() + " :\n");
 		for (Card c : player.getCards()) {
@@ -70,6 +76,9 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
+	/**
+	 * Displays the players own cards (hidden)
+	 */
 	public void displayOwnCards(ArrayList<Card> cards) {
 		StringBuilder stringBuilder = new StringBuilder("Vos cartes :\n");
 		for (Card c : cards) {
@@ -83,7 +92,7 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
-	/*
+	/**
 	 * Displays the remaining tokens on a single line in the console.
 	 * 
 	 * Doesn't return any value.
@@ -99,10 +108,8 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
-	/*
-	 * Displays the discarded cards from the first to the last
-	 * 
-	 * Doesn't return any value.
+	/**
+	 * Displays the discarded cards from the first to the last.
 	 */
 	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
 		StringBuilder stringBuilder = new StringBuilder("-- Défausse : ");
@@ -112,12 +119,18 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
+	/**
+	 * Splash screen for the end of the game
+	 */
 	public void displayEndGame() {
 		outStream.println("****************** FIN DE PARTIE ******************\n");
 		outStream.println("****************** FIN DE PARTIE ******************\n");
 		outStream.println("****************** FIN DE PARTIE ******************\n");
 	}
 
+	/**
+	 * Displays the end game score *
+	 */
 	public void displayScore(int score) {
 		StringBuilder stringBuilder = new StringBuilder(
 				"******************\n****Score final : " + score + "****\n******************\n\n");

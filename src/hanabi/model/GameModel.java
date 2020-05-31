@@ -3,11 +3,12 @@ package hanabi.model;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import hanabi.model.card.Card;
+import hanabi.model.card.CardColor;
+import hanabi.model.card.CardManager;
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
 
@@ -17,12 +18,11 @@ public class GameModel {
 	private TerminalController controller;
 	private InteractionManager interactionManager;
 
+	private FireworkManager fireworkManager;
+	private CardManager cardManager;
 	private ArrayList<Player> players;
-	private HashMap<CardColor, Integer> fireworkStatus;
-	private ArrayList<Card> discardedCards;
-	private int playerCount;
 
-	private ArrayList<Card> cards;
+	private int playerCount;
 	private int infoTokens;
 	private int fuseTokens;
 
@@ -35,6 +35,7 @@ public class GameModel {
 		addPlayers();
 		infoTokens = 8;
 		fuseTokens = 3;
+		cardManager = new CardManager();
 	}
 
 	public void playOneGame() {
@@ -61,15 +62,14 @@ public class GameModel {
 			view.splashScreen(p);
 			controller.waitForLineBreak();
 			displayCardsOfAllPlayersBut(p);
-			view.displayFireworkStatus(fireworkStatus);
+			view.displayFireworkStatus(fireworkManager.getFireworkStatus());
 			view.displayTokensRemaining(infoTokens, fuseTokens);
-			view.displayDiscardedCards(discardedCards);
+			view.displayDiscardedCards(cardManager.getDiscardedCards());
 			p.playTurn();
-			
-			/* 3 façons de stop le tour ( la partie en fait ) :
-			 * - des 5 partout
-			 * - plus de vies
-			 * - pioche vide
+
+			/*
+			 * 3 façons de stop le tour ( la partie en fait ) : - des 5 partout - plus de
+			 * vies - pioche vide
 			 */
 			if (instantVictoryState()) {
 				return 1;
@@ -77,30 +77,14 @@ public class GameModel {
 			if (fuseTokens <= 0)
 				return -1;
 			// TODO check EMPTY DECK
-			
+
 		}
 		return 0;
 	}
 
 	private void initNewgame() {
-		fireworkStatus = new HashMap<CardColor, Integer>();
-		for (CardColor color : CardColor.values()) {
-			fireworkStatus.put(color, 0);
-		}
-		discardedCards = new ArrayList<Card>();
-		cards = generateNewCardSet();
-		System.out.println(cards.size() + "...........");
-		shuffleAndDistributeCards(cards, players);
-	}
-
-	private void shuffleAndDistributeCards(ArrayList<Card> cards, ArrayList<Player> players) {
-		Collections.shuffle(cards);
-		for (Player p : players) {
-			for (int i = 0; i < 5; i++) {
-				Card c = cards.remove(cards.size() - 1);
-				p.getCards().add(c);
-			}
-		}
+		fireworkManager = new FireworkManager();
+		cardManager.initNewgame(players);
 	}
 
 	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
@@ -114,7 +98,7 @@ public class GameModel {
 	private boolean instantVictoryState() {
 		for (CardColor cardcolor : CardColor.values()) {
 			// if any '5' card hasn't been played, instantVictoryState returns false
-			if (fireworkStatus.get(cardcolor) != 5) {
+			if (fireworkManager.getFireworkStatus().get(cardcolor) != 5) {
 				return false;
 			}
 		}
@@ -124,28 +108,28 @@ public class GameModel {
 	private boolean canBePlaced(Card c) {
 		int index = c.getNumber();
 		CardColor color = c.getColor();
-		
-		view.printString(" ICI : " + fireworkStatus.get(color));
-		if ( fireworkStatus.get(color) == index - 1 ) {
+		Integer integer = fireworkManager.getFireworkStatus().get(color);
+		view.printString(" ICI : " + integer);
+		if (integer == index - 1) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	public boolean playCard(Card c) {
 		if (canBePlaced(c)) {
-			fireworkStatus.put(c.getColor(), c.getNumber());
-			
+			fireworkManager.getFireworkStatus().put(c.getColor(), c.getNumber());
+
 		} else {
-			discardedCards.add(c);
+			cardManager.getDiscardedCards().add(c);
 			fuseTokens--;
 		}
 		return false;
 	}
 
 	public void discardCard(Card c) {
-		discardedCards.add(c);
+		cardManager.getDiscardedCards().add(c);
 		infoTokens++;
 	}
 
@@ -171,23 +155,6 @@ public class GameModel {
 		}
 	}
 
-	private ArrayList<Card> generateNewCardSet() {
-		ArrayList<Card> deck = new ArrayList<Card>();
-
-		for (CardColor c : CardColor.values()) {
-			for (int i = 0; i < 3; i++) {
-				deck.add(new Card(1, c));
-			}
-			for (int i = 0; i < 2; i++) {
-				deck.add(new Card(2, c));
-				deck.add(new Card(3, c));
-				deck.add(new Card(4, c));
-			}
-			deck.add(new Card(5, c));
-		}
-		return deck;
-	}
-
 	/*
 	 * Get the number of information tokens. Returns an Integer.
 	 */
@@ -202,20 +169,19 @@ public class GameModel {
 		return players;
 	}
 
-	/*
+	/**
 	 * Uses the fireworkStatus to calculate the score. Is used in the end of each
 	 * game.
 	 * 
-	 * Returns the score.
+	 * @return Returns the score.
 	 */
 	public int getScore() {
 		int score = 0;
 		int value;
-		for (Entry<CardColor, Integer> entry : fireworkStatus.entrySet()) {
+		for (Entry<CardColor, Integer> entry : fireworkManager.getFireworkStatus().entrySet()) {
 			value = entry.getValue();
-			score += (value * value+1) / 2;
+			score += (value * value + 1) / 2;
 		}
-		
 		return score;
 	}
 

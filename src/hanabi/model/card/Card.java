@@ -1,4 +1,4 @@
-package hanabi.model;
+package hanabi.model.card;
 
 import java.util.Objects;
 

@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import hanabi.UtilityFunctions;
+import hanabi.model.card.Card;
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
 
@@ -50,12 +52,12 @@ public class InteractionManager {
 	protected Player selectPlayer(Player playerNotToSelect, ArrayList<Player> players) {
 		view.printString("Tapez le nom du joueur");
 		Predicate<String> p = (playerName) -> playerName == null || playerName.isBlank()
-				|| UtilityFunctions.getPlayerByName(playerName, players) == null
+				|| UtilityFunctions.searchForPlayerByName(playerName, players) == null
 				|| playerNotToSelect.getName().equals(playerName);
 		Supplier<String> s = () -> controller.getString();
 		String message = UtilityFunctions.listPlayerNamesExcept(players, playerNotToSelect.getName())
 				+ "\nTapez le nom du joueur auquel vous voulez envoyer une information :";
-		return UtilityFunctions.getPlayerByName(doMethodWhilePredicateSatisfied(p, s, message), players);
+		return UtilityFunctions.searchForPlayerByName(doMethodWhilePredicateSatisfied(p, s, message), players).get();
 	}
 
 	Card selectCard(String basemsg, ArrayList<Card> cards) {

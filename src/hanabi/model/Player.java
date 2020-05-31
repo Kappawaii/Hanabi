@@ -3,6 +3,7 @@ package hanabi.model;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import hanabi.model.card.Card;
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
 
