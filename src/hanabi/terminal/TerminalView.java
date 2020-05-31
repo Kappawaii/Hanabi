@@ -49,11 +49,11 @@ public class TerminalView {
 			strBuilder.append("********************************************************\n");
 		}
 		printString(strBuilder.toString());
-		printString("C'est le tour de " + p.getName() + " !\nAppuyez sur Entr�e pour commencer votre tour");
+		printString("C'est le tour de " + p.getName() + " !\nAppuyez sur Entr�e pour commencer votre tour");
 	}
 
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2) {
-		StringBuilder stringBuilder = new StringBuilder("�tat du feu d'artifice :");
+		StringBuilder stringBuilder = new StringBuilder("�tat du feu d'artifice :");
 		for (Entry<CardColor, Integer> entry : fireworkStatus2.entrySet()) {
 			stringBuilder.append("\nCouleur ").append(entry.getKey().toString()).append(" : ").append(entry.getValue());
 		}
@@ -70,11 +70,6 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
-	public void displayTokensRemaining(int informationTokens, int fuseTokens) {
-		printString("Jetons restants : \nJetons d'information : " + informationTokens + "\nJetons d'erreur : "
-				+ fuseTokens + " \n");
-	}
-
 	public void displayOwnCards(ArrayList<Card> cards) {
 		StringBuilder stringBuilder = new StringBuilder("Vos cartes :\n");
 		for (Card c : cards) {
@@ -86,6 +81,62 @@ public class TerminalView {
 		}
 		stringBuilder.append("\n\n");
 		printString(stringBuilder.toString());
+	}
 
+	/*
+	 * Displays the remaining tokens on a single line in the console.
+	 * 
+	 * Doesn't return any value.
+	 */
+	public void displayTokensRemaining(int infoTokens, int fuseTokens) {
+		StringBuilder stringBuilder = new StringBuilder("-------- Jetons Bleus : ");
+		for (int i = 0; i < infoTokens; i++)
+			stringBuilder.append('O');
+		stringBuilder.append(" || Jetons Rouges : ");
+		for (int i = 0; i < fuseTokens; i++)
+			stringBuilder.append('O');
+		stringBuilder.append(" -------- ");
+		printString(stringBuilder.toString());
+	}
+
+	/*
+	 * Displays the discarded cards from the first to the last
+	 * 
+	 * Doesn't return any value.
+	 */
+	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
+		StringBuilder stringBuilder = new StringBuilder("-- Défausse : ");
+		for (int i = 0; i < discardedCards.size(); i++)
+			stringBuilder.append(discardedCards.get(i)).append(" ,");
+		stringBuilder.append(" -- ");
+		printString(stringBuilder.toString());
+	}
+
+	public void displayEndGame() {
+		outStream.println("****************** FIN DE PARTIE ******************\n");
+		outStream.println("****************** FIN DE PARTIE ******************\n");
+		outStream.println("****************** FIN DE PARTIE ******************\n");
+	}
+
+	public void displayScore(int score) {
+		StringBuilder stringBuilder = new StringBuilder(
+				"******************\n****Score final : " + score + "****\n******************\n\n");
+
+		stringBuilder.append(" ### Qualité de la prestation .... \n       ");
+		if (score <= 5) {
+			stringBuilder.append(" Horrible ! La foule hue ! Vous ferez mieux la prochaine fois ! ");
+		} else if (score <= 10) {
+			stringBuilder.append(" Médiocre, vous recevez que quelques applaudissements ");
+		} else if (score <= 15) {
+			stringBuilder.append(" Honorable mais ne restera pas dans les mémoires ");
+		} else if (score <= 20) {
+			stringBuilder.append(" Excellente ! La foule est ravie ! ");
+		} else if (score <= 24) {
+			stringBuilder.append(" Extraordinaire ! Restera dans les mémoires, c'est certain ");
+		} else if (score <= 25) {
+			stringBuilder.append(" LEGENDAIRE !! Tout le monde est sans voix !! Bien joué !!  ");
+		}
+
+		printString(stringBuilder.toString());
 	}
 }
