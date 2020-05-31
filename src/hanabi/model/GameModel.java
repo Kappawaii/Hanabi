@@ -30,7 +30,7 @@ public class GameModel {
 	private boolean lastTurn;
 
 	/**
-	 * 
+	 * Constructs the game model, needs an input and a output stream.
 	 */
 	public GameModel(InputStream inputStream, PrintStream printStream) {
 		view = new TerminalView(Objects.requireNonNull(printStream));
@@ -49,16 +49,19 @@ public class GameModel {
 	 */
 	public void playOneGame() {
 		initNewgame();
-		while (fuseTokens > 0) {
+		boolean endgame = false;
+		while (fuseTokens > 0 && !endgame ) {
 			switch (oneTurn()) {
 			case 1:
 				// Victory !
 				view.displayEndGame();
 				view.displayScore(getScore());
+				endgame = true;
 			case -1:
 				// Defeat
 				view.displayEndGame();
 				view.displayDefeat();
+				endgame = true;
 				break;
 			case 0:
 				break;
@@ -66,9 +69,18 @@ public class GameModel {
 		}
 	}
 
-	// TODO commenter les codes de retour
+
 	/**
+	 * Makes one turn for all the players involved and displays all informations
+	 * Also tests if the game is over.
 	 * 
+	 * Returns codes to indicate the state of the current game.
+	 * Code : 
+	 *  => 0 : Keeps the game running
+	 *  => 1 : Victory of the players
+	 *  => -1 : Defeat of the players
+	 *  
+	 *  @return Returns Integer 
 	 */
 	public int oneTurn() {
 		for (Player p : players) {
@@ -89,18 +101,17 @@ public class GameModel {
 			}
 		}
 		if (lastTurn) {
-			// if last turn, variable was set to true
+			// if last turn, variable is set to true
 			return 1;
-		}
+		} 
 		if (cardManager.getCardsSize() <= 0) {
 			lastTurn = true;
-			return 0;
 		}
 		return 0;
 	}
 
 	/**
-	 * 
+	 * Allows to start a game
 	 */
 	private void initNewgame() {
 		lastTurn = false;
@@ -183,8 +194,7 @@ public class GameModel {
 	 */
 	public Optional<Card> discardCard(Card c) {
 		cardManager.getDiscardedCards().add(c);
-		infoTokens++;
-
+		addInfoToken();
 		return cardManager.drawCard();
 	}
 
@@ -203,6 +213,9 @@ public class GameModel {
 		return false;
 	}
 
+	/**
+	 * Add the players at the start of the game.
+	 */
 	private void addPlayers() {
 		int i = 0;
 		while (i < playerCount) {
@@ -244,6 +257,15 @@ public class GameModel {
 			score += (value * value + 1) / 2;
 		}
 		return score;
+	}
+	
+	/**
+	 * Verifies that infoTokens stays under 8.
+	 */
+	private void addInfoToken() {
+		if (infoTokens < 8 ) {
+			infoTokens++;
+		}
 	}
 
 }

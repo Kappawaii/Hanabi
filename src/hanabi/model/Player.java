@@ -85,9 +85,9 @@ public class Player {
 				cards.add(tuple.getX().get());
 			}
 			if (tuple.getY()) {
-				// TODO display rÃ©ussite
+				displaySuccess(c);
 			} else {
-				// TODO display failure
+				displayFail(c);
 			}
 		}
 	}
@@ -115,6 +115,20 @@ public class Player {
 			strBuilder.append(s).append("\n");
 		}
 		view.printString(strBuilder.toString());
+	}
+	
+	/**
+	 * 
+	 */
+	private void displaySuccess(Card c) {
+		view.printString("REUSSITE ! : Carte "+c+" posée avec succès !");
+	}
+	
+	/**
+	 * 
+	 */
+	private void displayFail(Card c) {
+		view.printString("Échec. Carte "+c+" part dans la défausse.");
 	}
 
 	/**

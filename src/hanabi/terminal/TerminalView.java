@@ -124,8 +124,6 @@ public class TerminalView {
 	 */
 	public void displayEndGame() {
 		outStream.println("****************** FIN DE PARTIE ******************\n");
-		outStream.println("****************** FIN DE PARTIE ******************\n");
-		outStream.println("****************** FIN DE PARTIE ******************\n");
 	}
 
 	public void displayEndofTurn() {
@@ -133,7 +131,7 @@ public class TerminalView {
 	}
 
 	/**
-	 * Displays the end game score *
+	 * Displays the end game score
 	 */
 	public void displayScore(int score) {
 		StringBuilder stringBuilder = new StringBuilder(
@@ -157,6 +155,12 @@ public class TerminalView {
 	}
 
 	public void displayDefeat() {
-
+		outStream.println("********************** DEFAITE **********************\n");
+		outStream.println("****** Vous avez perdu tout vos jetons rouges ******\n");
+	}
+	
+	public void displayFUCK() {
+		for (int i = 0; i < 300; i++)
+			outStream.println("FUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCK\n");
 	}
 }
