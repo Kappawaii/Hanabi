@@ -45,7 +45,8 @@ public class GameModel {
 	}
 
 	/**
-	 * 
+	 * Uses a loop to keep the game going until oneTurn() returns 1 or -1 
+	 * ( endgame variable turns true and stops the loop )
 	 */
 	public void playOneGame() {
 		initNewgame();
@@ -121,7 +122,7 @@ public class GameModel {
 	}
 
 	/**
-	 * 
+	 * Displays all the cards except the ones the player currently playing his turn has.
 	 */
 	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
 		for (Player player : players) {

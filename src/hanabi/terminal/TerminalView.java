@@ -14,6 +14,10 @@ public class TerminalView {
 
 	private PrintStream outStream;
 
+	/**
+	 * Builds a terminal view.
+	 * Needs an output stream.
+	 */
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
@@ -53,7 +57,7 @@ public class TerminalView {
 	}
 
 	/**
-	 * Displays the firework status
+	 * Displays the firework status.
 	 */
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2) {
 		StringBuilder stringBuilder = new StringBuilder("État du feu d'artifice :");
@@ -65,7 +69,7 @@ public class TerminalView {
 	}
 
 	/**
-	 * Displays the player's cards
+	 * Displays the player's cards.
 	 */
 	public void displayCardsOfPlayer(Player player) {
 		StringBuilder stringBuilder = new StringBuilder("Cartes de " + player.getName() + " :\n");
@@ -77,7 +81,7 @@ public class TerminalView {
 	}
 
 	/**
-	 * Displays the players own cards (hidden)
+	 * Displays the players own cards (hidden).
 	 */
 	public void displayOwnCards(ArrayList<Card> cards) {
 		StringBuilder stringBuilder = new StringBuilder("Vos cartes :\n");
@@ -126,12 +130,15 @@ public class TerminalView {
 		outStream.println("****************** FIN DE PARTIE ******************\n");
 	}
 
+	/**
+	 * Splash screen for the end of the current turn.
+	 */
 	public void displayEndofTurn() {
 		printString("Fin du tour, appuyez sur entrée pour passer au prochain joueur");
 	}
 
 	/**
-	 * Displays the end game score
+	 * Displays the end game score.
 	 */
 	public void displayScore(int score) {
 		StringBuilder stringBuilder = new StringBuilder(
@@ -154,13 +161,12 @@ public class TerminalView {
 		printString(stringBuilder.toString());
 	}
 
+	/**
+	 * Displays a defeat screen
+	 */
 	public void displayDefeat() {
 		outStream.println("********************** DEFAITE **********************\n");
 		outStream.println("****** Vous avez perdu tout vos jetons rouges ******\n");
 	}
 	
-	public void displayFUCK() {
-		for (int i = 0; i < 300; i++)
-			outStream.println("FUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCKFUCK\n");
-	}
 }

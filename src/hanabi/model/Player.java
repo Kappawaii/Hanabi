@@ -19,7 +19,9 @@ public class Player {
 	private InteractionManager interactionManager;
 
 	/**
-	 * 
+	 * Constructs the player, needs to be linked the game.
+	 * Needs to be linked the terminals.
+	 * The name cannot be changed.
 	 */
 	public Player(GameModel game, String name, TerminalController controller, TerminalView view,
 			InteractionManager interactionManager) {
@@ -33,7 +35,8 @@ public class Player {
 	}
 
 	/**
-	 * 
+	 * Functions that allows the player to start his turn and get a string used in order
+	 * to get his choice.
 	 */
 	public void playTurn() {
 		if (intelReceived.size() != 0) {
@@ -58,7 +61,7 @@ public class Player {
 	}
 
 	/**
-	 * 
+	 * Adds the string with the previous informations.
 	 */
 	public void addIntel(String msg) {
 		intelReceived.add(msg);
@@ -107,7 +110,7 @@ public class Player {
 	}
 
 	/**
-	 * 
+	 * Can display the informations the player has received from the others.
 	 */
 	private void displayInformation() {
 		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :\n");
@@ -118,28 +121,28 @@ public class Player {
 	}
 	
 	/**
-	 * 
+	 * Can display a simple message if the card was successfully placed.
 	 */
 	private void displaySuccess(Card c) {
 		view.printString("REUSSITE ! : Carte "+c+" posée avec succès !");
 	}
 	
 	/**
-	 * 
+	 * Can display a simple message if the card was dropped in the discarded cards.
 	 */
 	private void displayFail(Card c) {
 		view.printString("Échec. Carte "+c+" part dans la défausse.");
 	}
 
 	/**
-	 * 
+	 * @return Returns the name of the player.
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * 
+	 * @return Returns the cards in the hands of the player.
 	 */
 	public ArrayList<Card> getCards() {
 		return cards;
