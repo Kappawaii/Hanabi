@@ -80,8 +80,9 @@ public class TerminalView {
 		for (Card c : cards) {
 			stringBuilder.append("* ");
 		}
+		stringBuilder.append("\n");
 		for (int i = 0; i < cards.size(); i++) {
-			stringBuilder.append(i + " ");
+			stringBuilder.append((i + 1) + " ");
 		}
 		stringBuilder.append("\n\n");
 		printString(stringBuilder.toString());
