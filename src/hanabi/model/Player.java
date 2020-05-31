@@ -33,7 +33,7 @@ public class Player {
 		switch (interactionManager.getAction(name)) {
 		case "information":
 			if (game.getInfoTokens() < 1) {
-				view.printString("Jetons d'informations �puis�s");
+				view.printString("Jetons d'informations épuisés");
 				playTurn();
 			} else {
 				giveInformation();
@@ -54,7 +54,7 @@ public class Player {
 
 	private void giveInformation() {
 		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
-		view.printString("Entrez le message � envoyer � " + target.name);
+		view.printString("Entrez le message à envoyer à " + target.name);
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
@@ -66,7 +66,7 @@ public class Player {
 	}
 
 	private void discardCard() {
-		Card c = interactionManager.selectCard("Choisissez la carte à défausser :\n", cards);
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :\n", cards);
 		if (cards.remove(c)) {
 			game.discardCard(c);
 		}

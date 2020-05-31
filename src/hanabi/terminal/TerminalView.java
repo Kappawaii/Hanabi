@@ -95,7 +95,7 @@ public class TerminalView {
 		stringBuilder.append(" || Jetons Rouges : ");
 		for (int i = 0; i < fuseTokens; i++)
 			stringBuilder.append('O');
-		stringBuilder.append(" -------- ");
+		stringBuilder.append(" -------- \n");
 		printString(stringBuilder.toString());
 	}
 
@@ -108,7 +108,7 @@ public class TerminalView {
 		StringBuilder stringBuilder = new StringBuilder("-- Défausse : ");
 		for (int i = 0; i < discardedCards.size(); i++)
 			stringBuilder.append(discardedCards.get(i)).append(" ,");
-		stringBuilder.append(" -- ");
+		stringBuilder.append(" -- \n");
 		printString(stringBuilder.toString());
 	}
 
