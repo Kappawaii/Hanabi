@@ -16,7 +16,7 @@ public class CardManager {
 	}
 
 	/**
-	 *
+	 * Resets the class data to a "start of game" state
 	 */
 	public void initNewgame(ArrayList<Player> players) {
 		discardedCards = new ArrayList<Card>();
@@ -25,7 +25,9 @@ public class CardManager {
 	}
 
 	/**
-	 *
+	 * Generates a new, sorted card set
+	 * 
+	 * @return the card set in a ArrayList<Card>
 	 */
 	private ArrayList<Card> generateNewCardSet() {
 		ArrayList<Card> deck = new ArrayList<Card>();
@@ -45,11 +47,12 @@ public class CardManager {
 	}
 
 	/**
-	 * 
+	 * Shuffles the ArrayList of cards given as argument, and distributes 5 cards to
+	 * each player of the playerList given as argument
 	 */
-	private void shuffleAndDistributeCards(ArrayList<Card> cards, ArrayList<Player> players) {
+	private void shuffleAndDistributeCards(ArrayList<Card> cards, ArrayList<Player> playerList) {
 		Collections.shuffle(cards);
-		for (Player p : players) {
+		for (Player p : playerList) {
 			for (int i = 0; i < 5; i++) {
 				Card c = cards.remove(cards.size() - 1);
 				p.getCards().add(c);
