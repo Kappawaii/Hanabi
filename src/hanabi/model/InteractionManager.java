@@ -29,7 +29,7 @@ public class InteractionManager {
 	public String getPlayerName(int playerNumber) {
 		Predicate<String> p = (name) -> (name == null || name.isBlank());
 		Supplier<String> s = () -> controller.getString();
-		return doMethodWhilePredicateSatisfied(p, s, "Entrez le nom du Joueur n°" + (playerNumber + 1));
+		return doMethodWhilePredicateSatisfied(p, s, "Entrez le nom du Joueur :" + (playerNumber + 1));
 	}
 
 	String getAction(String name) {
@@ -39,8 +39,8 @@ public class InteractionManager {
 		Supplier<String> supplier = () -> controller.getString();
 		return doMethodWhilePredicateSatisfied(predicate, supplier,
 				name + ", que voulez vous faire ?\n"
-						+ "Tapez 'information' pour envoyer une information à un autre joueur\n"
-						+ "Tapez 'jeter' pour vous défausser d'une carte et récupérer un jeton d'information\n"
+						+ "Tapez 'information' pour envoyer une information Ã  un autre joueur\n"
+						+ "Tapez 'jeter' pour vous dÃ©fausser d'une carte et rÃ©cupÃ©rer un jeton d'information\n"
 						+ "Tapez 'jouer' pour jouer une carte\n");
 	}
 

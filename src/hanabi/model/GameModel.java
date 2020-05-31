@@ -165,7 +165,7 @@ public class GameModel {
 				players.add(temp);
 				i++;
 			} else {
-				view.printString("Le joueur existe d�j�, veuillez choisir un autre nom");
+				view.printString("Le joueur existe déjà, veuillez choisir un autre nom");
 			}
 		}
 	}
