@@ -14,9 +14,6 @@ public class TerminalView {
 
 	private PrintStream outStream;
 
-	/**
-	 *
-	 */
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
@@ -131,13 +128,16 @@ public class TerminalView {
 		outStream.println("****************** FIN DE PARTIE ******************\n");
 	}
 
+	public void displayEndofTurn() {
+		printString("Fin du tour, appuyez sur entrée pour passer au prochain joueur");
+	}
+
 	/**
 	 * Displays the end game score *
 	 */
 	public void displayScore(int score) {
 		StringBuilder stringBuilder = new StringBuilder(
 				"******************\n****Score final : " + score + "****\n******************\n\n");
-
 		stringBuilder.append("       ####### Qualité de la prestation ####### \n       ");
 		if (score <= 5) {
 			stringBuilder.append(" Horrible ! La foule hue ! Vous ferez mieux la prochaine fois ! ");
@@ -152,7 +152,11 @@ public class TerminalView {
 		} else if (score <= 25) {
 			stringBuilder.append(" LEGENDAIRE ! Tout le monde est sans voix ! Bien joué !  ");
 		}
-		
+
 		printString(stringBuilder.toString());
+	}
+
+	public void displayDefeat() {
+
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -64,7 +65,7 @@ public class InteractionManager {
 	protected Player selectPlayer(Player playerNotToSelect, ArrayList<Player> players) {
 		view.printString("Tapez le nom du joueur");
 		Predicate<String> p = (playerName) -> playerName == null || playerName.isBlank()
-				|| UtilityFunctions.searchForPlayerByName(playerName, players) == null
+				|| UtilityFunctions.searchForPlayerByName(playerName, players).equals(Optional.empty())
 				|| playerNotToSelect.getName().equals(playerName);
 		Supplier<String> s = () -> controller.getString();
 		String message = UtilityFunctions.listPlayerNamesExcept(players, playerNotToSelect.getName())

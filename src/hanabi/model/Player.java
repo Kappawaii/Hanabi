@@ -7,6 +7,7 @@ import java.util.Optional;
 import hanabi.model.card.Card;
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
+import hanabi.utility.Tuple;
 
 public class Player {
 	private GameModel game;
@@ -78,25 +79,30 @@ public class Player {
 	 */
 	private void playCard() {
 		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à jouer :\n", cards);
-		Optional<Card> newCard;
 		if (cards.remove(c)) {
-			newCard = game.playCard(c);
-			if ( newCard.isPresent() )
-				cards.add( newCard.get() );
+			Tuple<Optional<Card>, Boolean> tuple = game.playCard(c);
+			if (tuple.getX().isPresent()) {
+				cards.add(tuple.getX().get());
+			}
+			if (tuple.getY()) {
+				// TODO display réussite
+			} else {
+				// TODO display failure
+			}
 		}
 	}
 
 	/**
-	 * Gets the card the player wants to discard and removes it from the cards.
-	 * Also takes a new card.
+	 * Gets the card the player wants to discard and removes it from the cards. Also
+	 * takes a new card.
 	 */
 	private void discardCard() {
 		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :\n", cards);
 		Optional<Card> newCard;
 		if (cards.remove(c)) {
 			newCard = game.discardCard(c);
-			if ( newCard.isPresent() )
-				cards.add( newCard.get() );
+			if (newCard.isPresent())
+				cards.add(newCard.get());
 		}
 	}
 

@@ -12,6 +12,7 @@ import hanabi.model.card.CardColor;
 import hanabi.model.card.CardManager;
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
+import hanabi.utility.Tuple;
 
 public class GameModel {
 
@@ -26,6 +27,7 @@ public class GameModel {
 	private int playerCount;
 	private int infoTokens;
 	private int fuseTokens;
+	private boolean lastTurn;
 
 	/**
 	 * 
@@ -52,20 +54,19 @@ public class GameModel {
 			case 1:
 				// Victory !
 				view.displayEndGame();
-				view.displayScore( getScore() );
-				break;
+				view.displayScore(getScore());
 			case -1:
 				// Defeat
 				view.displayEndGame();
-				view.displayScore( getScore() );
+				view.displayDefeat();
 				break;
 			case 0:
 				break;
 			}
-
 		}
 	}
 
+	// TODO commenter les codes de retour
 	/**
 	 * 
 	 */
@@ -78,24 +79,22 @@ public class GameModel {
 			view.displayTokensRemaining(infoTokens, fuseTokens);
 			view.displayDiscardedCards(cardManager.getDiscardedCards());
 			p.playTurn();
-
-			/*
-			 * 3 façons de stop le tour ( la partie en fait ) : 
-			 * - des 5 partout 
-			 * - plus de
-			 * vies 
-			 * - pioche vide
-			 */
-			if ( instantVictoryState() ) {
+			view.displayEndofTurn();
+			controller.waitForLineBreak();
+			if (instantVictoryState()) {
 				return 1;
 			}
-			if ( cardManager.getCardsSize() <= 0 ) {
-				// TODO : Last turn 
-				return 1;
-			}
-			if (fuseTokens <= 0)
+			if (fuseTokens <= 0) {
 				return -1;
-			
+			}
+		}
+		if (lastTurn) {
+			// if last turn, variable was set to true
+			return 1;
+		}
+		if (cardManager.getCardsSize() <= 0) {
+			lastTurn = true;
+			return 0;
 		}
 		return 0;
 	}
@@ -104,6 +103,7 @@ public class GameModel {
 	 * 
 	 */
 	private void initNewgame() {
+		lastTurn = false;
 		fireworkManager = new FireworkManager();
 		fireworkManager.initNewGame();
 		cardManager.initNewgame(players);
@@ -121,10 +121,10 @@ public class GameModel {
 	}
 
 	/**
-	 * Tests if all colors have been completed with cards. 
-	 * Returns true if it's the case.
+	 * Tests if all colors have been completed with cards. Returns true if it's the
+	 * case.
 	 *
-	 * @return Returns a boolean 
+	 * @return Returns a boolean
 	 */
 	private boolean instantVictoryState() {
 		for (CardColor cardcolor : CardColor.values()) {
@@ -137,14 +137,14 @@ public class GameModel {
 	}
 
 	/**
-	 * Tests if the card can be placed on the table. 
+	 * Tests if the card can be placed on the table.
 	 *
-	 * @return Returns a boolean 
+	 * @return Returns a boolean
 	 */
 	private boolean canBePlaced(Card c) {
 		int index = c.getNumber();
 		CardColor color = c.getColor();
-		Integer integer = fireworkManager.getFireworkStatus().get( color );
+		Integer integer = fireworkManager.getFireworkStatus().get(color);
 		if (integer == index - 1) {
 			return true;
 		} else {
@@ -153,40 +153,46 @@ public class GameModel {
 	}
 
 	/**
-	 * Tests if the card can be placed on the table. 
-	 * If the card can be placed, modifies the HashMap with the correct color and changes the value.
+	 * Tests if the card can be placed on the table. If the card can be placed,
+	 * modifies the HashMap with the correct color and changes the value.
 	 * 
 	 * Else, adds the card to the discarded cards and removes a life token.
 	 * 
-	 * @return Returns, if available, a new card picked from the stack, else returns null
+	 * @return Returns, if available, a new card picked from the stack, else returns
+	 *         null
 	 */
-	public Optional<Card> playCard(Card c) {
+	public Tuple<Optional<Card>, Boolean> playCard(Card c) {
+		Tuple<Optional<Card>, Boolean> tuple = new Tuple<Optional<Card>, Boolean>(null, null);
 		if (canBePlaced(c)) {
 			fireworkManager.getFireworkStatus().put(c.getColor(), c.getNumber());
+			tuple.setY(true);
 		} else {
 			cardManager.getDiscardedCards().add(c);
+			tuple.setY(false);
 			fuseTokens--;
 		}
-
-		return cardManager.drawCard();
+		tuple.setX(cardManager.drawCard());
+		return tuple;
 	}
 
 	/**
 	 * Adds the card in the discarded cards arraylist
 	 * 
-	 * @return Returns, if available, a new card picked from the stack, else returns null
+	 * @return Returns, if available, a new card picked from the stack, else returns
+	 *         null
 	 */
 	public Optional<Card> discardCard(Card c) {
 		cardManager.getDiscardedCards().add(c);
 		infoTokens++;
-		
+
 		return cardManager.drawCard();
 	}
 
 	/**
-	 * If there's enough informations tokens, proceeds and returns true. Else return false.
+	 * If there's enough informations tokens, proceeds and returns true. Else return
+	 * false.
 	 *
-	 * @return Returns a boolean 
+	 * @return Returns a boolean
 	 */
 	public boolean giveInformationToPlayer(Player p, String msg) {
 		if (infoTokens > 0) {

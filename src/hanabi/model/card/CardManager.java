@@ -11,9 +11,6 @@ public class CardManager {
 	private ArrayList<Card> discardedCards;
 	private ArrayList<Card> cards;
 
-	/**
-	 *
-	 */
 	public CardManager() {
 
 	}
@@ -61,12 +58,13 @@ public class CardManager {
 	}
 
 	/**
-	 * @return Returns, if available, a new card picked from the stack, else returns null
+	 * @return Returns, if available, a new card picked from the stack, else returns
+	 *         null
 	 */
 	public Optional<Card> drawCard() {
-		Optional<Card> newCard = Optional.of(cards.get(cards.size() - 1));
 		if (cards.size() > 0) {
-			cards.remove(newCard.get());
+			Optional<Card> newCard = Optional.of(cards.get(cards.size() - 1));
+			cards.remove(cards.size() - 1);
 			return newCard;
 		} else {
 			return Optional.empty();
@@ -86,7 +84,7 @@ public class CardManager {
 	public ArrayList<Card> getCards() {
 		return cards;
 	}
-	
+
 	/**
 	 * @return Returns the size of the stack
 	 */
