@@ -7,7 +7,7 @@ public class UtilityFunctions {
 	static String cardListAsString(ArrayList<Card> cards) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < cards.size(); i++) {
-			stringBuilder.append(i + 1).append(" : ").append(cards.get(i - 1));
+			stringBuilder.append(i + 1).append(" : ").append(cards.get(i));
 		}
 		return stringBuilder.toString();
 	}

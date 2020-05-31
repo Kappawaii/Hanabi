@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Map.Entry;
 
 import hanabi.terminal.TerminalController;
 import hanabi.terminal.TerminalView;
@@ -41,10 +42,12 @@ public class GameModel {
 		while (fuseTokens > 0) {
 			switch (oneTurn()) {
 			case 1:
-				// Victoire
+				// Victory !
+				view.displayScore( getScore() );
 				break;
 			case -1:
-				// Défaite
+				// Defeat
+				view.displayScore( getScore() );
 				break;
 			case 0:
 				break;
@@ -59,11 +62,14 @@ public class GameModel {
 			controller.waitForLineBreak();
 			displayCardsOfAllPlayersBut(p);
 			view.displayFireworkStatus(fireworkStatus);
-			view.displayTokensRemaining();
+			view.displayTokensRemaining(infoTokens,fuseTokens);
+			view.displayDiscardedCards(discardedCards);
 			p.playTurn();
 			if (instantVictoryState()) {
 				return 1;
 			}
+			if ( fuseTokens <= 0 )
+				return -1;
 			// TODO check defeat
 			/*
 			 * if (something) { return -1; }
@@ -111,8 +117,29 @@ public class GameModel {
 		return true;
 	}
 
-	public boolean playCard() {
-		// TODO
+	private boolean canBePlaced(Card c) {
+		int index = c.getNumber();
+		CardColor color = c.getColor();
+		
+		/*
+		if ( fireworkStatus.get() ) {
+			
+		} else {
+			
+		}
+		*/
+		return true;
+	}
+	
+	public boolean playCard(Card c) {
+		if ( canBePlaced(c) ){
+			// TODO here
+			//fireworkStatus.put( c.getColor() , c.getNumber() );
+			fireworkStatus.put( c.getColor() , c.getNumber() );
+		} else {
+			discardedCards.add(c);
+			fuseTokens--;
+		}
 		return false;
 	}
 
@@ -138,7 +165,7 @@ public class GameModel {
 				players.add(temp);
 				i++;
 			} else {
-				view.printString("Le joueur existe déjà, veuillez choisir un autre nom");
+				view.printString("Le joueur existe dï¿½jï¿½, veuillez choisir un autre nom");
 			}
 		}
 	}
@@ -160,12 +187,35 @@ public class GameModel {
 		return deck;
 	}
 
+	/*
+	 * Get the number of information tokens.
+	 * Returns an Integer.
+	 */
 	public int getInfoTokens() {
 		return infoTokens;
 	}
 
+	/*
+	 * Returns the array of players.
+	 */
 	public ArrayList<Player> getPlayerList() {
 		return players;
+	}
+	
+	/*
+	 * Uses the fireworkStatus to calcultate the score. 
+	 * Is used in the end of each game.
+	 * 
+	 * Returns the score.
+	 */
+	public int getScore() {
+		int score = 0;
+		
+		for (Entry<CardColor, Integer> entry : fireworkStatus.entrySet()) {
+			score += entry.getValue();
+		}
+		
+		return score;
 	}
 
 }
