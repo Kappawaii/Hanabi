@@ -64,7 +64,7 @@ public class InteractionManager {
 		Predicate<Integer> predicate = (input) -> (input == null || input < 0 || input > cards.size() - 1);
 		Supplier<Integer> supplier = () -> controller.getInt() - 1;
 		return cards.get(doMethodWhilePredicateSatisfied(predicate, supplier,
-				basemsg + UtilityFunctions.cardListAsString(cards)));
+				basemsg /* + UtilityFunctions.cardListAsString(cards) */));
 	}
 
 	Card selectCardInOwnCards(String basemsg, ArrayList<Card> cards) {

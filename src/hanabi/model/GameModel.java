@@ -84,6 +84,7 @@ public class GameModel {
 
 	private void initNewgame() {
 		fireworkManager = new FireworkManager();
+		fireworkManager.initNewGame();
 		cardManager.initNewgame(players);
 	}
 

@@ -13,6 +13,7 @@ public class FireworkManager {
 	}
 
 	public void initNewGame() {
+		fireworkStatus.clear();
 		for (CardColor color : CardColor.values()) {
 			fireworkStatus.put(color, 0);
 		}
