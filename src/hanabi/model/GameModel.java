@@ -65,15 +65,19 @@ public class GameModel {
 			view.displayTokensRemaining(infoTokens, fuseTokens);
 			view.displayDiscardedCards(discardedCards);
 			p.playTurn();
+			
+			/* 3 façons de stop le tour ( la partie en fait ) :
+			 * - des 5 partout
+			 * - plus de vies
+			 * - pioche vide
+			 */
 			if (instantVictoryState()) {
 				return 1;
 			}
 			if (fuseTokens <= 0)
 				return -1;
-			// TODO check defeat
-			/*
-			 * if (something) { return -1; }
-			 */
+			// TODO check EMPTY DECK
+			
 		}
 		return 0;
 	}
@@ -120,22 +124,19 @@ public class GameModel {
 	private boolean canBePlaced(Card c) {
 		int index = c.getNumber();
 		CardColor color = c.getColor();
-
-		/*
-		 * if ( fireworkStatus.get() ) {
-		 * 
-		 * } else {
-		 * 
-		 * }
-		 */
-		return true;
+		
+		view.printString(" ICI : " + fireworkStatus.get(color));
+		if ( fireworkStatus.get(color) == index - 1 ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
-
+	
 	public boolean playCard(Card c) {
 		if (canBePlaced(c)) {
-			// TODO here
-			// fireworkStatus.put( c.getColor() , c.getNumber() );
 			fireworkStatus.put(c.getColor(), c.getNumber());
+			
 		} else {
 			discardedCards.add(c);
 			fuseTokens--;
@@ -202,18 +203,19 @@ public class GameModel {
 	}
 
 	/*
-	 * Uses the fireworkStatus to calcultate the score. Is used in the end of each
+	 * Uses the fireworkStatus to calculate the score. Is used in the end of each
 	 * game.
 	 * 
 	 * Returns the score.
 	 */
 	public int getScore() {
 		int score = 0;
-
+		int value;
 		for (Entry<CardColor, Integer> entry : fireworkStatus.entrySet()) {
-			score += entry.getValue();
+			value = entry.getValue();
+			score += (value * value+1) / 2;
 		}
-
+		
 		return score;
 	}
 
