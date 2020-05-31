@@ -3,8 +3,8 @@ package hanabi.model.card;
 import java.util.Objects;
 
 public class Card {
-	private int number;
-	private CardColor color;
+	private final int number;
+	private final CardColor color;
 
 	public Card(int number, CardColor color) {
 		if (number < 1 || number > 5) {

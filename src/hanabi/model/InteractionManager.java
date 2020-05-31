@@ -16,11 +16,17 @@ public class InteractionManager {
 	TerminalController controller;
 	TerminalView view;
 
+	/**
+	 *
+	 */
 	public InteractionManager(TerminalController controller, TerminalView view) {
 		this.controller = Objects.requireNonNull(controller);
 		this.view = Objects.requireNonNull(view);
 	}
 
+	/**
+	 *
+	 */
 	public int getPlayerCount(int minPlayers, int maxPlayers) {
 		Predicate<Integer> p = (i) -> (i == null || i < minPlayers || i > maxPlayers);
 		Supplier<Integer> s = () -> controller.getInt();
@@ -28,12 +34,18 @@ public class InteractionManager {
 				"Entrez le nombre de joueurs (entre " + minPlayers + " et " + maxPlayers + ")");
 	}
 
+	/**
+	 *
+	 */
 	public String getPlayerName(int playerNumber) {
 		Predicate<String> p = (name) -> (name == null || name.isBlank());
 		Supplier<String> s = () -> controller.getString();
 		return doMethodWhilePredicateSatisfied(p, s, "Entrez le nom du Joueur :" + (playerNumber + 1));
 	}
 
+	/**
+	 *
+	 */
 	String getAction(String name) {
 		List<String> possibleActionList = Arrays.asList("information", "jeter", "jouer");
 		Predicate<String> predicate = (
@@ -46,7 +58,7 @@ public class InteractionManager {
 						+ "Tapez 'jouer' pour jouer une carte\n");
 	}
 
-	/*
+	/**
 	 * Doesn't let the user select the Player given as parameter
 	 */
 	protected Player selectPlayer(Player playerNotToSelect, ArrayList<Player> players) {
@@ -60,6 +72,9 @@ public class InteractionManager {
 		return UtilityFunctions.searchForPlayerByName(doMethodWhilePredicateSatisfied(p, s, message), players).get();
 	}
 
+	/**
+	 *
+	 */
 	Card selectCard(String basemsg, ArrayList<Card> cards) {
 		Predicate<Integer> predicate = (input) -> (input == null || input < 0 || input > cards.size() - 1);
 		Supplier<Integer> supplier = () -> controller.getInt() - 1;
@@ -67,6 +82,9 @@ public class InteractionManager {
 				basemsg /* + UtilityFunctions.cardListAsString(cards) */));
 	}
 
+	/**
+	 * 
+	 */
 	Card selectCardInOwnCards(String basemsg, ArrayList<Card> cards) {
 		view.displayOwnCards(cards);
 		return selectCard(basemsg, cards);

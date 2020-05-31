@@ -2,6 +2,7 @@ package hanabi.model;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 import hanabi.model.card.Card;
 import hanabi.terminal.TerminalController;
@@ -9,13 +10,16 @@ import hanabi.terminal.TerminalView;
 
 public class Player {
 	private GameModel game;
-	private String name;
+	private final String name;
 	private ArrayList<Card> cards;
 	private TerminalController controller;
 	private TerminalView view;
 	private ArrayList<String> intelReceived;
 	private InteractionManager interactionManager;
 
+	/**
+	 * 
+	 */
 	public Player(GameModel game, String name, TerminalController controller, TerminalView view,
 			InteractionManager interactionManager) {
 		this.interactionManager = interactionManager;
@@ -27,6 +31,9 @@ public class Player {
 		intelReceived = new ArrayList<String>();
 	}
 
+	/**
+	 * 
+	 */
 	public void playTurn() {
 		if (intelReceived.size() != 0) {
 			displayInformation();
@@ -49,31 +56,53 @@ public class Player {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void addIntel(String msg) {
 		intelReceived.add(msg);
 	}
 
+	/**
+	 * Selects another player to give an information to.
+	 */
 	private void giveInformation() {
 		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
 		view.printString("Entrez le message à envoyer à " + target.name);
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
+	/**
+	 * Gets the card the player wants to use and will pick a new one, if available.
+	 * Also takes a new card.
+	 */
 	private void playCard() {
 		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à jouer :\n", cards);
+		Optional<Card> newCard;
 		if (cards.remove(c)) {
-			game.playCard(c);
-			// TODO : get new card
+			newCard = game.playCard(c);
+			if ( newCard.isPresent() )
+				cards.add( newCard.get() );
 		}
 	}
 
+	/**
+	 * Gets the card the player wants to discard and removes it from the cards.
+	 * Also takes a new card.
+	 */
 	private void discardCard() {
 		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :\n", cards);
+		Optional<Card> newCard;
 		if (cards.remove(c)) {
-			game.discardCard(c);
+			newCard = game.discardCard(c);
+			if ( newCard.isPresent() )
+				cards.add( newCard.get() );
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void displayInformation() {
 		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :\n");
 		for (String s : intelReceived) {
@@ -82,10 +111,16 @@ public class Player {
 		view.printString(strBuilder.toString());
 	}
 
+	/**
+	 * 
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * 
+	 */
 	public ArrayList<Card> getCards() {
 		return cards;
 	}

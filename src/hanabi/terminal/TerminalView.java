@@ -14,6 +14,9 @@ public class TerminalView {
 
 	private PrintStream outStream;
 
+	/**
+	 *
+	 */
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
@@ -37,7 +40,7 @@ public class TerminalView {
 	}
 
 	/**
-	 * Makes a splash screen intented to be displayed just before the player's turn
+	 * Makes a splash screen intended to be displayed just before the player's turn
 	 */
 	public void splashScreen(Player p) {
 		StringBuilder strBuilder = new StringBuilder();
@@ -114,7 +117,7 @@ public class TerminalView {
 	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
 		StringBuilder stringBuilder = new StringBuilder("-- Défausse : ");
 		for (int i = 0; i < discardedCards.size(); i++)
-			stringBuilder.append(discardedCards.get(i)).append(" ,");
+			stringBuilder.append(discardedCards.get(i)).append(" - ");
 		stringBuilder.append(" -- \n");
 		printString(stringBuilder.toString());
 	}
@@ -135,7 +138,7 @@ public class TerminalView {
 		StringBuilder stringBuilder = new StringBuilder(
 				"******************\n****Score final : " + score + "****\n******************\n\n");
 
-		stringBuilder.append(" ### Qualité de la prestation .... \n       ");
+		stringBuilder.append("       ####### Qualité de la prestation ####### \n       ");
 		if (score <= 5) {
 			stringBuilder.append(" Horrible ! La foule hue ! Vous ferez mieux la prochaine fois ! ");
 		} else if (score <= 10) {
@@ -149,7 +152,7 @@ public class TerminalView {
 		} else if (score <= 25) {
 			stringBuilder.append(" LEGENDAIRE ! Tout le monde est sans voix ! Bien joué !  ");
 		}
-
+		
 		printString(stringBuilder.toString());
 	}
 }

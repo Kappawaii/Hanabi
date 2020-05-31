@@ -11,16 +11,25 @@ public class CardManager {
 	private ArrayList<Card> discardedCards;
 	private ArrayList<Card> cards;
 
+	/**
+	 *
+	 */
 	public CardManager() {
 
 	}
 
+	/**
+	 *
+	 */
 	public void initNewgame(ArrayList<Player> players) {
 		discardedCards = new ArrayList<Card>();
 		cards = generateNewCardSet();
 		shuffleAndDistributeCards(cards, players);
 	}
 
+	/**
+	 *
+	 */
 	private ArrayList<Card> generateNewCardSet() {
 		ArrayList<Card> deck = new ArrayList<Card>();
 
@@ -38,6 +47,9 @@ public class CardManager {
 		return deck;
 	}
 
+	/**
+	 * 
+	 */
 	private void shuffleAndDistributeCards(ArrayList<Card> cards, ArrayList<Player> players) {
 		Collections.shuffle(cards);
 		for (Player p : players) {
@@ -48,19 +60,37 @@ public class CardManager {
 		}
 	}
 
+	/**
+	 * @return Returns, if available, a new card picked from the stack, else returns null
+	 */
 	public Optional<Card> drawCard() {
+		Optional<Card> newCard = Optional.of(cards.get(cards.size() - 1));
 		if (cards.size() > 0) {
-			return Optional.of(cards.get(cards.size() - 1));
+			cards.remove(newCard.get());
+			return newCard;
 		} else {
 			return Optional.empty();
 		}
 	}
 
+	/**
+	 * @return Returns the Array of discarded cards
+	 */
 	public ArrayList<Card> getDiscardedCards() {
 		return discardedCards;
 	}
 
+	/**
+	 * @return Returns the Array of cards in the stack
+	 */
 	public ArrayList<Card> getCards() {
 		return cards;
+	}
+	
+	/**
+	 * @return Returns the size of the stack
+	 */
+	public int getCardsSize() {
+		return cards.size();
 	}
 }
