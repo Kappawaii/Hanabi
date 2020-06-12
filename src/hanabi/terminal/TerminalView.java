@@ -15,8 +15,7 @@ public class TerminalView {
 	private PrintStream outStream;
 
 	/**
-	 * Builds a terminal view.
-	 * Needs an output stream.
+	 * Builds a terminal view. Needs an output stream.
 	 */
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
@@ -85,7 +84,8 @@ public class TerminalView {
 	 */
 	public void displayOwnCards(ArrayList<Card> cards) {
 		StringBuilder stringBuilder = new StringBuilder("Vos cartes :\n");
-		for (Card c : cards) {
+		for (@SuppressWarnings("unused")
+		Card c : cards) {
 			stringBuilder.append("* ");
 		}
 		stringBuilder.append("\n");
@@ -168,5 +168,5 @@ public class TerminalView {
 		outStream.println("********************** DEFAITE **********************\n");
 		outStream.println("****** Vous avez perdu tout vos jetons rouges ******\n");
 	}
-	
+
 }

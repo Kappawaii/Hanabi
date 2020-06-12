@@ -1,4 +1,4 @@
-package hanabi;
+package hanabi.utility;
 
 import java.util.ArrayList;
 import java.util.Optional;
