@@ -1,135 +1,40 @@
 package hanabi.model;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 
 import hanabi.model.card.Card;
 import hanabi.model.card.CardColor;
 import hanabi.model.card.CardManager;
-import hanabi.terminal.TerminalController;
-import hanabi.terminal.TerminalView;
 import hanabi.utility.Tuple;
 
 public class GameModel {
-
-	private TerminalView view;
-	private TerminalController controller;
-	private InteractionManager interactionManager;
 
 	private FireworkManager fireworkManager;
 	private CardManager cardManager;
 	private ArrayList<Player> players;
 
-	private int playerCount;
 	private int infoTokens;
 	private int fuseTokens;
-	private boolean lastTurn;
 
 	/**
 	 * Constructs the game model, needs an input and a output stream.
 	 */
-	public GameModel(InputStream inputStream, PrintStream printStream) {
-		view = new TerminalView(Objects.requireNonNull(printStream));
-		controller = new TerminalController(Objects.requireNonNull(inputStream));
-		interactionManager = new InteractionManager(controller, view);
+	public GameModel() {
 		players = new ArrayList<Player>();
-		playerCount = interactionManager.getPlayerCount(2, 8);
-		addPlayers();
 		infoTokens = 8;
 		fuseTokens = 3;
 		cardManager = new CardManager();
 	}
 
 	/**
-	 * Uses a loop to keep the game going until oneTurn() returns 1 or -1 
-	 * ( endgame variable turns true and stops the loop )
-	 */
-	public void playOneGame() {
-		initNewgame();
-		boolean endgame = false;
-		while (fuseTokens > 0 && !endgame ) {
-			switch (oneTurn()) {
-			case 1:
-				// Victory !
-				view.displayEndGame();
-				view.displayScore(getScore());
-				endgame = true;
-			case -1:
-				// Defeat
-				view.displayEndGame();
-				view.displayDefeat();
-				endgame = true;
-				break;
-			case 0:
-				break;
-			}
-		}
-	}
-
-
-	/**
-	 * Makes one turn for all the players involved and displays all informations
-	 * Also tests if the game is over.
-	 * 
-	 * Returns codes to indicate the state of the current game.
-	 * Code : 
-	 *  => 0 : Keeps the game running
-	 *  => 1 : Victory of the players
-	 *  => -1 : Defeat of the players
-	 *  
-	 *  @return Returns Integer 
-	 */
-	public int oneTurn() {
-		for (Player p : players) {
-			view.splashScreen(p);
-			controller.waitForLineBreak();
-			displayCardsOfAllPlayersBut(p);
-			view.displayFireworkStatus(fireworkManager.getFireworkStatus());
-			view.displayTokensRemaining(infoTokens, fuseTokens);
-			view.displayDiscardedCards(cardManager.getDiscardedCards());
-			p.playTurn();
-			view.displayEndofTurn();
-			controller.waitForLineBreak();
-			if (instantVictoryState()) {
-				return 1;
-			}
-			if (fuseTokens <= 0) {
-				return -1;
-			}
-		}
-		if (lastTurn) {
-			// if last turn, variable is set to true
-			return 1;
-		} 
-		if (cardManager.getCardsSize() <= 0) {
-			lastTurn = true;
-		}
-		return 0;
-	}
-
-	/**
 	 * Allows to start a game
 	 */
-	private void initNewgame() {
-		lastTurn = false;
+	public void initNewgame() {
 		fireworkManager = new FireworkManager();
 		fireworkManager.initNewGame();
 		cardManager.initNewgame(players);
-	}
-
-	/**
-	 * Displays all the cards except the ones the player currently playing his turn has.
-	 */
-	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
-		for (Player player : players) {
-			if (player != playerNotToDisplay) {
-				view.displayCardsOfPlayer(player);
-			}
-		}
 	}
 
 	/**
@@ -138,7 +43,7 @@ public class GameModel {
 	 *
 	 * @return Returns a boolean
 	 */
-	private boolean instantVictoryState() {
+	public boolean instantVictoryState() {
 		for (CardColor cardcolor : CardColor.values()) {
 			// if any '5' card hasn't been played, instantVictoryState returns false
 			if (fireworkManager.getFireworkStatus().get(cardcolor) != 5) {
@@ -215,22 +120,6 @@ public class GameModel {
 	}
 
 	/**
-	 * Add the players at the start of the game.
-	 */
-	private void addPlayers() {
-		int i = 0;
-		while (i < playerCount) {
-			Player temp = new Player(this, interactionManager.getPlayerName(i), controller, view, interactionManager);
-			if (!players.contains(temp)) {
-				players.add(temp);
-				i++;
-			} else {
-				view.printString("Le joueur existe déjà, veuillez choisir un autre nom");
-			}
-		}
-	}
-
-	/**
 	 * @return Returns the number of information tokens. Returns an Integer.
 	 */
 	public int getInfoTokens() {
@@ -259,14 +148,30 @@ public class GameModel {
 		}
 		return score;
 	}
-	
+
 	/**
 	 * Verifies that infoTokens stays under 8.
 	 */
 	private void addInfoToken() {
-		if (infoTokens < 8 ) {
+		if (infoTokens < 8) {
 			infoTokens++;
 		}
+	}
+
+	public FireworkManager getFireworkManager() {
+		return fireworkManager;
+	}
+
+	public CardManager getCardManager() {
+		return cardManager;
+	}
+
+	public ArrayList<Player> getPlayers() {
+		return players;
+	}
+
+	public int getFuseTokens() {
+		return fuseTokens;
 	}
 
 }

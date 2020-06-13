@@ -19,9 +19,8 @@ public class Player {
 	private InteractionManager interactionManager;
 
 	/**
-	 * Constructs the player, needs to be linked the game.
-	 * Needs to be linked the terminals.
-	 * The name cannot be changed.
+	 * Constructs the player, needs to be linked the game. Needs to be linked the
+	 * terminals. The name cannot be changed.
 	 */
 	public Player(GameModel game, String name, TerminalController controller, TerminalView view,
 			InteractionManager interactionManager) {
@@ -35,18 +34,18 @@ public class Player {
 	}
 
 	/**
-	 * Functions that allows the player to start his turn and get a string used in order
-	 * to get his choice.
+	 * Functions that allows the player to start his turn and get a string used in
+	 * order to get his choice.
 	 */
-	public void playTurn() {
+	public void playTurn(int infoTokens) {
 		if (intelReceived.size() != 0) {
 			displayInformation();
 		}
 		switch (interactionManager.getAction(name)) {
 		case "information":
-			if (game.getInfoTokens() < 1) {
+			if (infoTokens < 1) {
 				view.printString("Jetons d'informations Ã©puisÃ©s");
-				playTurn();
+				playTurn(infoTokens);
 			} else {
 				giveInformation();
 			}
@@ -119,19 +118,19 @@ public class Player {
 		}
 		view.printString(strBuilder.toString());
 	}
-	
+
 	/**
 	 * Can display a simple message if the card was successfully placed.
 	 */
 	private void displaySuccess(Card c) {
-		view.printString("REUSSITE ! : Carte "+c+" posée avec succès !");
+		view.printString("REUSSITE ! : Carte " + c + " posï¿½e avec succï¿½s !");
 	}
-	
+
 	/**
 	 * Can display a simple message if the card was dropped in the discarded cards.
 	 */
 	private void displayFail(Card c) {
-		view.printString("Échec. Carte "+c+" part dans la défausse.");
+		view.printString("ï¿½chec. Carte " + c + " part dans la dï¿½fausse.");
 	}
 
 	/**
