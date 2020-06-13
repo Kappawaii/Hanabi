@@ -17,8 +17,6 @@ public class TerminalView implements View {
 	/**
 	 * Builds a terminal view. Needs an output stream.
 	 */
-	q
-
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
