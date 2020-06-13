@@ -39,47 +39,50 @@ public class GraphicalView implements View {
 		this.backgroundColor = Color.LIGHT_GRAY;
 		this.tokenRadius = 30;
 		this.appContext = context;
+		splashScreen();
 	}
 	
 	public static GraphicalView initGameGraphics(int xOrigin, int yOrigin, int width, int height,  ApplicationContext context) {
-		int cardSize = (int) ( width * 1 / 15 );
-		int playerSpaceHeight = (int) ( width / 2 ); // TODO : change this
-		int playerSpaceWidth = (int) ( height * 2 / 5 ); // TODO : change this.
+		int cardSize = (int) ( width * 1 / 20 );
+		int playerSpaceHeight = (int) ( height * 4 / 5 / 4 ); // TODO : change this
+		int playerSpaceWidth = (int) ( width / 3 ); // TODO : change this.
 		return new GraphicalView(xOrigin, yOrigin, width, height, cardSize, playerSpaceWidth , playerSpaceHeight, context);
 	}
 	
 	public void splashScreen() {
-		clearWindow();
 		printString( "Bienvenue sur Hanabi !" );
 	}
 	
 	@Override
 	public void printString(String str) {
+		clearWindow();
 		appContext.renderFrame( graphics -> {
 			graphics.drawString(str, width/2, height/2);
 		});
 	}
 	
 	public void splashScreen( Player p ) {
-		clearWindow();
-		printString( "Au tour de : " + p.getName() + " \n Appuyez sur entrée pour jouer votre tour" );
+		printString( "Au tour de : " + p.getName() + "\n Appuyez sur entrée pour jouer votre tour" );
 	}
 
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus) {
-		int x=0, y=0;
 		appContext.renderFrame( graphics -> {
 			for (Entry<CardColor, Integer> entry : fireworkStatus.entrySet()) {
 				// entry.getValue()
 				// entry.getKey().toString()
-				
-				drawCard(graphics, entry.getKey() , entry.getValue() , x, y);
+				int x=(int) (width/3) + 45, y=15;
+				for( int i=1; i <= entry.getValue();i++ ) {
+					drawCard(graphics, entry.getKey() , entry.getValue() , x, y);
+					y += 15; 
+				}
+				x += cardSize + 30;
 			}
 		});
 	}
 
 	public void displayTokensRemaining(int infoTokens, int fuseTokens) {
 		appContext.renderFrame( graphics -> {
-			int x = (width/2) ,y = (3*height/5);
+			int x = (int) (width/2) ,y = (height*12/20);
 			for(int i=1; i <= infoTokens; i++ ) {
 				drawToken(graphics, x+ (i * tokenRadius) + ( tokenRadius/2 ), y, Color.BLUE);
 			}
@@ -92,10 +95,9 @@ public class GraphicalView implements View {
 
 	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
 		appContext.renderFrame( graphics -> {
-			int x=width/2, y=(int) ( height * 2 / 5 );
+			int x=(int) (width/2), y=(int) ( height * 14 / 20 );
 			graphics.setColor(Color.BLACK);
-			
-			
+			drawDeck(graphics, discardedCards, x, y, true);
 		});
 	
 	}
@@ -109,28 +111,31 @@ public class GraphicalView implements View {
 	 * Displays the player's cards.
 	 */
 	@Override
-	public void displayCardsOfPlayer(ArrayList<Player> players) {
-		clearWindow();
+	public void displayCardsOfPlayer(ArrayList<Player> players , Player playerNotToDisplay) {
 		appContext.renderFrame( graphics -> {
-			int x=0,y=0;
-			graphics.setColor(Color.RED);
+			int x= 15, y= 15 ;
 			for(Player player : players) {
-				graphics.setColor(Color.RED);
-				graphics.drawString( player.toString(), x, y );
-				drawDeck(graphics, player, x, y+30, true);
-				y += playerSpaceHeight;
+				if( !player.equals(playerNotToDisplay)) {
+					graphics.setColor(Color.RED);
+					graphics.drawString( player.toString(), x + (playerSpaceWidth/2), y );
+					graphics.setColor(Color.RED);
+					drawDeck(graphics, player.getCards(), x, y+15, true);
+					y += playerSpaceHeight;
+				}
 			}
-			
 		}); 
 	}
 	
 	@Override
 	public void displayOwnCards(ArrayList<Card> cards) {
 		appContext.renderFrame( graphics -> {
-			int x=0,y=0;
+			int x=15, y=(int) ( height * 4/5 );
 			graphics.setColor(Color.BLACK);
-			
-		});
+			y += 30; 
+			graphics.setColor(Color.GREEN);
+			graphics.drawString( " Vous " , x + (playerSpaceWidth/2), y );
+			drawDeck(graphics, cards, x, y+15, false);
+		}); 
 	}
 
 	@Override
@@ -141,7 +146,6 @@ public class GraphicalView implements View {
 
 	@Override
 	public void displayEndofTurn() {
-		clearWindow();
 		printString("FIN DE VOTRE TOUR");
 	}
 
@@ -166,15 +170,18 @@ public class GraphicalView implements View {
 		});
 	}
 	
-	private void drawDeck( Graphics2D graphics, Player player , int x, int y, boolean showCards ) {
+	private void drawDeck( Graphics2D graphics, ArrayList<Card> cards , int x, int y, boolean showCards ) {
 		int i = 30;
-		int count=0 ;
-		for( Card card : player.getCards()) {
+		int count=1 ;
+		for( Card card : cards) {
+			graphics.setColor(Color.RED);
 			if( showCards ) {
+				graphics.setColor(Color.RED);
 				drawCard( graphics, card.getColor(), card.getNumber(), x + i, y );
 			} else {
+				graphics.setColor(Color.BLACK);
 				graphics.drawRect( x+i, (4*height/5)+y, cardSize, cardSize);
-				graphics.drawString( String.valueOf(count) , (width/3)+x+i, y+(cardSize/2) );
+				graphics.drawString( String.valueOf(count) , x+i, y+(cardSize/2) );
 			}
 			i += cardSize+30; 
 			count++;
@@ -184,16 +191,30 @@ public class GraphicalView implements View {
 	private void drawCard(Graphics2D graphics, CardColor color, int numberCard, int x, int y ) {
 		graphics.setColor( Color.BLACK );
 
-		graphics.drawRect( x, y, cardSize, 10);
-		graphics.drawRect( x + cardSize, y, 10, cardSize );
-		graphics.drawRect( x, y + cardSize, cardSize , 10);
-		graphics.drawRect( x, y, 10, cardSize );
+		graphics.fillRect( x, y, cardSize, 10);
+		graphics.fillRect( x + cardSize - 10, y, 10, cardSize );
+		graphics.fillRect( x, y + cardSize - 10, cardSize , 10);
+		graphics.fillRect( x, y, 10, cardSize );
 		
-		graphics.drawString( String.valueOf( numberCard ), x, y );
+		graphics.drawString( String.valueOf( numberCard ), x + (cardSize/2) , y + (cardSize/2));
 	}
 
-	private RectangularShape drawSquare(int x, int y) {
-		return new Rectangle2D.Float( x, y, cardSize, cardSize );
+	public void prepareBoard() {
+		clearWindow();
+		appContext.renderFrame( graphics -> {
+			graphics.setColor(Color.DARK_GRAY);
+			graphics.fillRect(0 , (4*height/5), width, 6);
+			graphics.fillRect(width/3 + 30, 0, 6, 4*height/5 );
+		});
+	}
+
+	public void displayIntel(String string) {
+		
+	}
+
+	public void displayDepletedInfoTokens() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

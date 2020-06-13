@@ -16,7 +16,7 @@ public interface View {
 
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2);
 
-	public void displayCardsOfPlayer(ArrayList<Player> players);
+	public void displayCardsOfPlayer(ArrayList<Player> players , Player playerNotToDisplay);
 
 	public void displayOwnCards(ArrayList<Card> cards);
 

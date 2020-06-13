@@ -17,7 +17,6 @@ public class TerminalView implements View {
 	/**
 	 * Builds a terminal view. Needs an output stream.
 	 */
-
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
@@ -71,17 +70,18 @@ public class TerminalView implements View {
 	/**
 	 * Displays the player's cards.
 	 */
-	public void displayCardsOfPlayer(ArrayList<Player> players) {
+	public void displayCardsOfPlayer(ArrayList<Player> players , Player playerNotToDisplay) {
 		StringBuilder stringBuilder = new StringBuilder();
 		
 		for (Player player : players) {
-			stringBuilder.append("Cartes de " + player.getName() + " :\n");
-			for (Card c : player.getCards()) {
-				stringBuilder.append(c.toString()).append(" ; ");
+			if(!player.equals(playerNotToDisplay)) {
+				stringBuilder.append("Cartes de " + player.getName() + " :\n");
+				for (Card c : player.getCards()) {
+					stringBuilder.append(c.toString()).append(" ; ");
+				}
+				stringBuilder.append("\n");
 			}
-			stringBuilder.append("\n");
 		}
-
 		printString(stringBuilder.toString());
 	}
 
