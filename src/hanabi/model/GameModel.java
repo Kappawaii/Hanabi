@@ -174,4 +174,14 @@ public class GameModel {
 		return fuseTokens;
 	}
 
+	public ArrayList<Player> getAllPlayersBut(Player playerNotToDisplay) {
+		ArrayList<Player> array = new ArrayList<Player>(); 
+		for (Player player : players) {
+			if (!player.equals(player)) {
+				array.add( player );
+			}
+		}
+		return array;
+	}
+
 }

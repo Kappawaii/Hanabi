@@ -17,6 +17,7 @@ public class TerminalView implements View {
 	/**
 	 * Builds a terminal view. Needs an output stream.
 	 */
+
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
@@ -70,12 +71,17 @@ public class TerminalView implements View {
 	/**
 	 * Displays the player's cards.
 	 */
-	public void displayCardsOfPlayer(Player player) {
-		StringBuilder stringBuilder = new StringBuilder("Cartes de " + player.getName() + " :\n");
-		for (Card c : player.getCards()) {
-			stringBuilder.append(c.toString()).append(" ; ");
+	public void displayCardsOfPlayer(ArrayList<Player> players) {
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		for (Player player : players) {
+			stringBuilder.append("Cartes de " + player.getName() + " :\n");
+			for (Card c : player.getCards()) {
+				stringBuilder.append(c.toString()).append(" ; ");
+			}
+			stringBuilder.append("\n");
 		}
-		stringBuilder.append("\n");
+
 		printString(stringBuilder.toString());
 	}
 
@@ -140,24 +146,11 @@ public class TerminalView implements View {
 	/**
 	 * Displays the end game score.
 	 */
-	public void displayScore(int score) {
+	public void displayScore(int score, String result) {
 		StringBuilder stringBuilder = new StringBuilder(
 				"******************\n****Score final : " + score + "****\n******************\n\n");
 		stringBuilder.append("       ####### Qualité de la prestation ####### \n       ");
-		if (score <= 5) {
-			stringBuilder.append(" Horrible ! La foule hue ! Vous ferez mieux la prochaine fois ! ");
-		} else if (score <= 10) {
-			stringBuilder.append(" Médiocre, vous ne recevez que quelques applaudissements.");
-		} else if (score <= 15) {
-			stringBuilder.append(" Honorable, mais vous ne resterez pas dans les mémoires.");
-		} else if (score <= 20) {
-			stringBuilder.append(" Excellent ! La foule est ravie ! ");
-		} else if (score <= 24) {
-			stringBuilder.append(" Extraordinaire ! Restera dans les mémoires, c'est certain.");
-		} else if (score <= 25) {
-			stringBuilder.append(" LEGENDAIRE ! Tout le monde est sans voix ! Bien joué !  ");
-		}
-
+		stringBuilder.append(result);
 		printString(stringBuilder.toString());
 	}
 
