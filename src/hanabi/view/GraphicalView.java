@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import fr.umlv.zen5.ApplicationContext;
 import hanabi.model.GameModel;
@@ -20,6 +21,7 @@ public class GraphicalView implements View {
 	private final int width;
 	private final int height;
 	private final int cardSize;
+	private final int tokenRadius;
 	private final int playerSpaceWidth;
 	private final int playerSpaceHeight;
 	private final Color backgroundColor;
@@ -35,6 +37,7 @@ public class GraphicalView implements View {
 		this.playerSpaceWidth = playerSpaceWidth;
 		this.playerSpaceHeight = playerSpaceHeight;
 		this.backgroundColor = Color.LIGHT_GRAY;
+		this.tokenRadius = 30;
 		this.appContext = context;
 	}
 	
@@ -45,187 +48,152 @@ public class GraphicalView implements View {
 		return new GraphicalView(xOrigin, yOrigin, width, height, cardSize, playerSpaceWidth , playerSpaceHeight, context);
 	}
 	
-	
-	/**
-	 * Draws the game board from its data, using an existing Graphics2D object.
-	 * @param graphics a Graphics2D object provided by the default method {@code draw(ApplicationContext, GameData)}
-	 * @param data the GameData containing the game data.
-	 */
-	void draw(Graphics2D graphics, GameModel gamemodel , Player player) {
-		// example
-		/*
-		 
-		graphics.setColor(Color.YELLOW);
-		graphics.fill(new Rectangle2D.Float(xOrigin, yOrigin, width, height));
-		
-		graphics.clearRect(0, height / 4 * 3, width / 2, height);
-		*/
-		
-		/* DRAW PLAYER */
-		ArrayList<Player> arrayPlayers = gamemodel.getAllPlayersBut(player);
-
-		/*
-		for (int i = 0; i < arrayPlayers.size(); i++) {
-			drawOtherPlayerSpace( graphics, arrayPlayers.get(i), (i%2 == 0) ? 0 : width/2, (i < 2) ? 0 : playerHeight );
-		}
-		*/
-	
-		drawOtherPlayerSpace( graphics, arrayPlayers );
-		
-		// TODO : Draw firework
-		
-		graphics.setColor(Color.CYAN);
-		graphics.fill(new Rectangle2D.Float(0, height * 4/10, width/2, height * 3/10));
-		
-		// TODO : Draw défausse
-		
-		/*displayDiscardedCards*/
-		graphics.setColor(Color.RED); 
-		graphics.fill(new Rectangle2D.Float(width/2, height * 4/10, width/2, height * 3/10));
-		
-		// TODO : Draw player choices
-		
-		/* drawPlayerSpace(); */
-		
-		graphics.setColor(Color.BLACK); 
-		graphics.fill(new Rectangle2D.Float(0, height * 7/10, width, height * 3/10));
-	}
-	
-	/**
-	 * Draws the game board from its data, using an existing {@code ApplicationContext}.
-	 * @param context the {@code ApplicationContext} of the game
-	 * @param data the GameData containing the game data.
-	 * @param view the GameView on which to draw.
-	 */
-	public void draw( GameModel gamemodel, Player player) {
-		appContext.renderFrame( graphics -> this.draw(graphics, gamemodel, player) ); // do not modify
-	}
-	
-	/**
-	 * Draw the space for a one player
-	 * @param graphics
-	 * @param gamemodel
-	 */
-	private void drawOtherPlayerSpace( Graphics2D graphics, ArrayList<Player> players ) {
-		int x=0,y=0;
-		graphics.setColor(Color.RED);
-		
-		for(Player player : players) {
-			graphics.drawString(player.getName(), x, y);
-			drawDeck(graphics, player, x, y, true);
-			y = ( x == playerSpaceWidth ) ? 0 : playerSpaceHeight;
-			x = ( x == playerSpaceWidth ) ? 0 : playerSpaceWidth;
-		}
-		
-	}
-	
-	private void drawDeck( Graphics2D graphics, Player player , int x, int y, boolean showCards ) {
-		int i=0;
-		for( Card card : player.getCards()) {
-			/*graphics.fill( drawSquare(x + cardSize*i + 10, y) );*/
-			graphics.setColor( Color.WHITE );
-			graphics.drawLine( (cardSize*i) + 30, y, (cardSize*(i+1)), y);
-			graphics.drawLine( (cardSize*(i+1)), y, (cardSize*(i+1)), y+cardSize );
-			graphics.drawLine( (cardSize*(i+1)), y+cardSize,(cardSize*i) + 30, y+cardSize);
-			graphics.drawLine( (cardSize*i) + 30, y+cardSize, (cardSize*i) + 30, y );
-			
-			graphics.drawString( String.valueOf( card.getNumber() ), x, y );
-			/*graphics.fill( drawSquare(x + cardSize*i + 10, y) );*/
-		}
-	}
-	
-	private RectangularShape drawSquare(int x, int y) {
-		return new Rectangle2D.Float( x, y, cardSize, cardSize );
-	}
-	
-	
-	
-	/**
-	 * Draw the space for a one player
-	 * @param graphics
-	 * @param gamemodel
-	 */
-	private void drawPlayerSpace( Graphics2D graphics, Player player , int x, int y ) {
-		
-	}
-	
-	
 	public void splashScreen() {
 		clearWindow();
+		printString( "Bienvenue sur Hanabi !" );
+	}
+	
+	@Override
+	public void printString(String str) {
 		appContext.renderFrame( graphics -> {
-			graphics.drawString( "Votre tour est terminé ! \n Appuyez sur entrée", width/2, height/2);
+			graphics.drawString(str, width/2, height/2);
 		});
 	}
 	
 	public void splashScreen( Player p ) {
 		clearWindow();
+		printString( "Au tour de : " + p.getName() + " \n Appuyez sur entrée pour jouer votre tour" );
+	}
+
+	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus) {
+		int x=0, y=0;
 		appContext.renderFrame( graphics -> {
-			graphics.drawString( "Au tour de : " + p.getName() + " \n Appuyez sur entrée pour jouer votre tour" , width/2, height/2);
+			for (Entry<CardColor, Integer> entry : fireworkStatus.entrySet()) {
+				// entry.getValue()
+				// entry.getKey().toString()
+				
+				drawCard(graphics, entry.getKey() , entry.getValue() , x, y);
+			}
 		});
 	}
+
+	public void displayTokensRemaining(int infoTokens, int fuseTokens) {
+		appContext.renderFrame( graphics -> {
+			int x = (width/2) ,y = (3*height/5);
+			for(int i=1; i <= infoTokens; i++ ) {
+				drawToken(graphics, x+ (i * tokenRadius) + ( tokenRadius/2 ), y, Color.BLUE);
+			}
+			x = width;
+			for(int i=1; i <= fuseTokens; i++ ) {
+				drawToken(graphics, x- (i * tokenRadius) - (tokenRadius/2), y, Color.RED);
+			}
+		});
+	}
+
+	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
+		appContext.renderFrame( graphics -> {
+			int x=width/2, y=(int) ( height * 2 / 5 );
+			graphics.setColor(Color.BLACK);
+			
+			
+		});
 	
-	public void clearWindow() {
+	}
+	
+	private void drawToken( Graphics2D graphics, int x, int y , Color color) {
+		graphics.setColor(color);
+		graphics.fillArc( x, y, tokenRadius , tokenRadius , 0 , 360 );
+	}
+
+	/**
+	 * Displays the player's cards.
+	 */
+	@Override
+	public void displayCardsOfPlayer(ArrayList<Player> players) {
+		clearWindow();
+		appContext.renderFrame( graphics -> {
+			int x=0,y=0;
+			graphics.setColor(Color.RED);
+			for(Player player : players) {
+				graphics.setColor(Color.RED);
+				graphics.drawString( player.toString(), x, y );
+				drawDeck(graphics, player, x, y+30, true);
+				y += playerSpaceHeight;
+			}
+			
+		}); 
+	}
+	
+	@Override
+	public void displayOwnCards(ArrayList<Card> cards) {
+		appContext.renderFrame( graphics -> {
+			int x=0,y=0;
+			graphics.setColor(Color.BLACK);
+			
+		});
+	}
+
+	@Override
+	public void displayEndGame() {
+		clearWindow();
+		printString("Fin de partie ! Votre score ... ");
+	}
+
+	@Override
+	public void displayEndofTurn() {
+		clearWindow();
+		printString("FIN DE VOTRE TOUR");
+	}
+
+	@Override
+	public void displayScore(int score , String result) {
+		StringBuilder stringBuilder = new StringBuilder(score + " !");
+		stringBuilder.append(result);
+		printString(stringBuilder.toString());
+	}
+
+	@Override
+	public void displayDefeat() {
+		StringBuilder stringBuilder = new StringBuilder("DEFAITE\n");
+		stringBuilder.append("Vous avez perdu tout vos jetons rouge !");
+		printString(stringBuilder.toString());
+	}
+	
+	private void clearWindow() {
 		appContext.renderFrame( graphics -> {
 			graphics.setColor(backgroundColor);
 			graphics.fill(new Rectangle2D.Float(0, 0, width, height) );
 		});
 	}
+	
+	private void drawDeck( Graphics2D graphics, Player player , int x, int y, boolean showCards ) {
+		int i = 30;
+		int count=0 ;
+		for( Card card : player.getCards()) {
+			if( showCards ) {
+				drawCard( graphics, card.getColor(), card.getNumber(), x + i, y );
+			} else {
+				graphics.drawRect( x+i, (4*height/5)+y, cardSize, cardSize);
+				graphics.drawString( String.valueOf(count) , (width/3)+x+i, y+(cardSize/2) );
+			}
+			i += cardSize+30; 
+			count++;
+		}
+	}
+	
+	private void drawCard(Graphics2D graphics, CardColor color, int numberCard, int x, int y ) {
+		graphics.setColor( Color.BLACK );
 
-	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus) {
-		// TODO Auto-generated method stub
+		graphics.drawRect( x, y, cardSize, 10);
+		graphics.drawRect( x + cardSize, y, 10, cardSize );
+		graphics.drawRect( x, y + cardSize, cardSize , 10);
+		graphics.drawRect( x, y, 10, cardSize );
 		
+		graphics.drawString( String.valueOf( numberCard ), x, y );
 	}
 
-	public void displayTokensRemaining(int infoTokens, int fuseTokens) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void printString(String str) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayCardsOfPlayer(Player player) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayOwnCards(ArrayList<Card> cards) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayEndGame() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayEndofTurn() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayScore(int score) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayDefeat() {
-		// TODO Auto-generated method stub
-		
+	private RectangularShape drawSquare(int x, int y) {
+		return new Rectangle2D.Float( x, y, cardSize, cardSize );
 	}
 	
 }

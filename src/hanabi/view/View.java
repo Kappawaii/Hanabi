@@ -16,7 +16,7 @@ public interface View {
 
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus2);
 
-	public void displayCardsOfPlayer(Player player);
+	public void displayCardsOfPlayer(ArrayList<Player> players);
 
 	public void displayOwnCards(ArrayList<Card> cards);
 
@@ -28,7 +28,7 @@ public interface View {
 
 	public void displayEndofTurn();
 
-	public void displayScore(int score);
+	public void displayScore(int score, String result);
 
 	public void displayDefeat();
 }
