@@ -8,10 +8,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import hanabi.controller.TerminalController;
 import hanabi.model.card.Card;
-import hanabi.terminal.TerminalController;
-import hanabi.terminal.TerminalView;
 import hanabi.utility.UtilityFunctions;
+import hanabi.view.TerminalView;
 
 public class InteractionManager {
 	TerminalController controller;

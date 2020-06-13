@@ -1,4 +1,4 @@
-package hanabi.terminal;
+package hanabi.view;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -10,13 +10,15 @@ import hanabi.model.Player;
 import hanabi.model.card.Card;
 import hanabi.model.card.CardColor;
 
-public class TerminalView {
+public class TerminalView implements View {
 
 	private PrintStream outStream;
 
 	/**
 	 * Builds a terminal view. Needs an output stream.
 	 */
+	q
+
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();

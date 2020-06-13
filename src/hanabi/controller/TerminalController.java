@@ -1,10 +1,10 @@
-package hanabi.terminal;
+package hanabi.controller;
 
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class TerminalController {
+public class TerminalController implements Controller {
 
 	@SuppressWarnings("unused")
 	private InputStream inStream;

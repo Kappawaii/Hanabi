@@ -5,11 +5,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import hanabi.controller.TerminalController;
 import hanabi.model.GameModel;
 import hanabi.model.InteractionManager;
 import hanabi.model.Player;
-import hanabi.terminal.TerminalController;
-import hanabi.terminal.TerminalView;
+import hanabi.view.TerminalView;
 
 public class Hanabi {
 

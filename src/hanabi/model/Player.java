@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
+import hanabi.controller.TerminalController;
 import hanabi.model.card.Card;
-import hanabi.terminal.TerminalController;
-import hanabi.terminal.TerminalView;
 import hanabi.utility.Tuple;
+import hanabi.view.TerminalView;
 
 public class Player {
 	private GameModel game;
