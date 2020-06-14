@@ -48,7 +48,7 @@ public class Hanabi {
 	/*
 	 * Graphical version
 	 */
-	public Hanabi(ApplicationContext context, InputStream inputStream, PrintStream printStream) {
+	public Hanabi(ApplicationContext context) {
 		this();
 		
 		ScreenInfo screenInfo = context.getScreenInfo();
