@@ -73,7 +73,7 @@ public class GraphicalController implements Controller {
 				callback.accept(stringBuilder.toString());
 			}
 		}
-		return stringBuilder.toString();
+		return stringBuilder.toString().toLowerCase();
 	}
 
 	/**
@@ -97,7 +97,6 @@ public class GraphicalController implements Controller {
 		return e;
 	}
 
-	
 	private String getString() {
 		return getKeyEvent().getKey().toString();
 	}
