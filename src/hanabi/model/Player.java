@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
+import hanabi.controller.GraphicalController;
 import hanabi.controller.TerminalController;
 import hanabi.model.card.Card;
 import hanabi.utility.Tuple;
+import hanabi.view.GraphicalView;
 import hanabi.view.TerminalView;
 
 public class Player {
@@ -17,17 +19,22 @@ public class Player {
 	private TerminalView view;
 	private ArrayList<String> intelReceived;
 	private InteractionManager interactionManager;
-
+	private GraphicalController GUIcontroller;
+	private GraphicalView GUIview;
+	
 	/**
 	 * Constructs the player, needs to be linked the game. Needs to be linked the
 	 * terminals. The name cannot be changed.
 	 */
-	public Player(GameModel game, String name, TerminalController controller, TerminalView view,
+	public Player(GameModel game, String name, TerminalController controller, TerminalView view, /*GraphicalController GUIcontroller,*/ GraphicalView GUIview ,
 			InteractionManager interactionManager) {
 		this.interactionManager = interactionManager;
 		this.game = Objects.requireNonNull(game);
 		this.controller = Objects.requireNonNull(controller);
 		this.view = Objects.requireNonNull(view);
+		
+		/*this.GUIcontroller = */
+		this.GUIview = GUIview;
 		this.name = Objects.requireNonNull(name, "name must not be null");
 		this.cards = new ArrayList<Card>();
 		intelReceived = new ArrayList<String>();
@@ -44,6 +51,7 @@ public class Player {
 		switch (interactionManager.getAction(name)) {
 		case "information":
 			if (infoTokens < 1) {
+				GUIview.displayDepletedInfoTokens();
 				view.printString("Jetons d'informations Ã©puisÃ©s");
 				playTurn(infoTokens);
 			} else {
@@ -71,7 +79,7 @@ public class Player {
 	 */
 	private void giveInformation() {
 		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
-		view.printString("Entrez le message Ã  envoyer Ã  " + target.name);
+		view.printString("Entrez le message à  envoyer à  " + target.name);
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
@@ -80,7 +88,7 @@ public class Player {
 	 * Also takes a new card.
 	 */
 	private void playCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  jouer :\n", cards);
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  jouer :" + System.lineSeparator(), cards);
 		if (cards.remove(c)) {
 			Tuple<Optional<Card>, Boolean> tuple = game.playCard(c);
 			if (tuple.getX().isPresent()) {
@@ -99,7 +107,7 @@ public class Player {
 	 * takes a new card.
 	 */
 	private void discardCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  dÃ©fausser :\n", cards);
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :" + System.lineSeparator(), cards);
 		Optional<Card> newCard;
 		if (cards.remove(c)) {
 			newCard = game.discardCard(c);
@@ -112,25 +120,33 @@ public class Player {
 	 * Can display the informations the player has received from the others.
 	 */
 	private void displayInformation() {
-		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :\n");
+		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :" + System.lineSeparator() );
 		for (String s : intelReceived) {
-			strBuilder.append(s).append("\n");
+			strBuilder.append(s).append( System.lineSeparator() );
 		}
-		view.printString(strBuilder.toString());
+		GUIview.displayIntel( strBuilder.toString() );
+		view.printString( strBuilder.toString() );
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	/**
 	 * Can display a simple message if the card was successfully placed.
 	 */
 	private void displaySuccess(Card c) {
-		view.printString("REUSSITE ! : Carte " + c + " posï¿½e avec succï¿½s !");
+		GUIview.printString("REUSSITE ! : Carte " + c + " posée avec succès !");
+		view.printString("REUSSITE ! : Carte " + c + " posée avec succès !");
 	}
 
 	/**
 	 * Can display a simple message if the card was dropped in the discarded cards.
 	 */
 	private void displayFail(Card c) {
-		view.printString("ï¿½chec. Carte " + c + " part dans la dï¿½fausse.");
+		GUIview.printString("Échec. Carte " + c + " part dans la défausse.");
+		view.printString("Échec. Carte " + c + " part dans la défausse.");
 	}
 
 	/**

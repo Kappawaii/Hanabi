@@ -58,7 +58,7 @@ public class Hanabi {
 		view = new TerminalView(Objects.requireNonNull(printStream));
 		controller = new TerminalController(Objects.requireNonNull(inputStream));
 		
-		interactionManager = new InteractionManager(controller,view);
+		interactionManager = new InteractionManager(controller,view, GUIview);
 		playerCount = interactionManager.getPlayerCount(2, 8);
 	}
 
@@ -111,6 +111,8 @@ public class Hanabi {
 			GUIview.splashScreen( p );
 			controller.waitForLineBreak();
 			
+			GUIview.prepareBoard();
+			
 			displayCardsOfAllPlayersBut(p);
 			
 			GUIview.displayFireworkStatus(game.getFireworkManager().getFireworkStatus());
@@ -122,11 +124,12 @@ public class Hanabi {
 			view.displayTokensRemaining(game.getInfoTokens(), game.getFuseTokens());
 			view.displayDiscardedCards(game.getCardManager().getDiscardedCards());
 			
-			p.playTurn(game.getInfoTokens());
+			p.playTurn( game.getInfoTokens() );
 			
-			GUIview.displayEndofTurn();
-			//view.displayEndofTurn();
+			//GUIview.displayEndofTurn();
+			view.displayEndofTurn();
 			controller.waitForLineBreak();
+			
 			if (game.instantVictoryState()) {
 				return 1;
 			}
@@ -150,12 +153,12 @@ public class Hanabi {
 	private void addPlayers(ArrayList<Player> players) {
 		int i = 0;
 		while (i < playerCount) {
-			Player temp = new Player(game, interactionManager.getPlayerName(i), controller, view, interactionManager);
+			Player temp = new Player(game, interactionManager.getPlayerName(i), controller, view, GUIview,interactionManager);
 			if (!players.contains(temp)) {
 				players.add(temp);
 				i++;
 			} else {
-				view.printString("Le joueur existe dÃ©jÃ , veuillez choisir un autre nom");
+				view.printString("Le joueur existe déjà , veuillez choisir un autre nom");
 			}
 		}
 	}
@@ -165,9 +168,10 @@ public class Hanabi {
 	 * has.
 	 */
 	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
-		ArrayList<Player> otherPlayers = game.getAllPlayersBut(playerNotToDisplay);
-		GUIview.displayCardsOfPlayer( otherPlayers );
-		view.displayCardsOfPlayer( otherPlayers );
+		ArrayList<Player> players = game.getPlayerList();
+		// Remove null
+		GUIview.displayCardsOfPlayer( players , playerNotToDisplay );
+		view.displayCardsOfPlayer( players , playerNotToDisplay);
 	}
 	
 	private String getFinalWord( int score ) {

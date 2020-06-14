@@ -11,20 +11,32 @@ import java.util.function.Supplier;
 import hanabi.controller.TerminalController;
 import hanabi.model.card.Card;
 import hanabi.utility.UtilityFunctions;
+import hanabi.view.GraphicalView;
 import hanabi.view.TerminalView;
 
 public class InteractionManager {
 	TerminalController controller;
 	TerminalView view;
+	
+	private GraphicalView GUIview;
+	/*private GraphicalController GUIcontrol;*/
 
 	/**
 	 *
 	 */
-	public InteractionManager(TerminalController controller, TerminalView view) {
+	public InteractionManager(TerminalController controller, TerminalView view ) {
 		this.controller = Objects.requireNonNull(controller);
 		this.view = Objects.requireNonNull(view);
 	}
 
+	/**
+	 *
+	 */
+	public InteractionManager(TerminalController controller, TerminalView view, GraphicalView GUIview ) {
+		this.controller = Objects.requireNonNull(controller);
+		this.view = Objects.requireNonNull(view);
+		this.GUIview = GUIview;
+	}
 	/**
 	 *
 	 */
@@ -88,6 +100,7 @@ public class InteractionManager {
 	 */
 	Card selectCardInOwnCards(String basemsg, ArrayList<Card> cards) {
 		view.displayOwnCards(cards);
+		GUIview.displayOwnCards(cards);
 		return selectCard(basemsg, cards);
 	}
 
