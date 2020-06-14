@@ -24,7 +24,7 @@ public class TerminalController implements Controller {
 		try {
 			return Integer.parseInt(scanner.nextLine());
 		} catch (NumberFormatException e) {
-			return null;
+			return -1;
 		}
 	}
 

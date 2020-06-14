@@ -17,7 +17,7 @@ public class TerminalView implements View {
 	/**
 	 * Builds a terminal view. Needs an output stream.
 	 */
-	
+
 	public TerminalView(PrintStream stream) {
 		this.outStream = Objects.requireNonNull(stream);
 		splashScreen();
@@ -71,11 +71,11 @@ public class TerminalView implements View {
 	/**
 	 * Displays the player's cards.
 	 */
-	public void displayCardsOfPlayer(ArrayList<Player> players , Player playerNotToDisplay) {
+	public void displayCardsOfPlayer(ArrayList<Player> players, Player playerNotToDisplay) {
 		StringBuilder stringBuilder = new StringBuilder();
-		
+
 		for (Player player : players) {
-			if(!player.equals(playerNotToDisplay)) {
+			if (!player.equals(playerNotToDisplay)) {
 				stringBuilder.append("Cartes de " + player.getName() + " :\n");
 				for (Card c : player.getCards()) {
 					stringBuilder.append(c.toString()).append(" ; ");
@@ -164,21 +164,24 @@ public class TerminalView implements View {
 	}
 
 	public void displayIntel(String str) {
-		printString( str );
+		printString(str);
 	}
-	
+
 	public void displayDepletedInfoTokens() {
-		printString("Jetons d'informations épuisés");
+		printString("Jetons d'informations Ã©puisÃ©s");
 	}
-	
-	public void prepareBoard() {}
-	
-	public void refreshName(String str) {}
-	
+
+	public void prepareBoard() {
+	}
+
+	public void refreshName(String str) {
+	}
+
 	public void displayChoices(String str) {
-		printString( str );
+		printString(str);
 	}
-	
-	public void refreshStatusChoice(String str) {}
-	
+
+	public void refreshStatusChoice(String str) {
+	}
+
 }

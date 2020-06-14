@@ -18,11 +18,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		/*
-		 * Hanabi hanabi = new Hanabi(System.in, System.out); hanabi.play();
-		 */
-		if (args.length == 1) {
 
+		if (args.length == 1) {
 			String input = args[0];
 			if (input.equals("g")) {
 				Application.run(Color.LIGHT_GRAY, Main::startGraphical);

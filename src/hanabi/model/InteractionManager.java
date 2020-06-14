@@ -49,16 +49,16 @@ public class InteractionManager {
 	/**
 	 *
 	 */
-	String getAction(String name, Consumer<String> callback ) {
+	String getAction(String name, Consumer<String> callback) {
 		List<String> possibleActionList = Arrays.asList("information", "jeter", "jouer");
 		Predicate<String> predicate = (
 				action) -> (action == null || action.isBlank() || !possibleActionList.contains(action));
 		Supplier<String> supplier = () -> controller.getString(callback);
 		return doMethodWhilePredicateSatisfied(predicate, supplier,
 				name + ", que voulez vous faire ?" + System.lineSeparator()
-						+ "Tapez 'information' pour envoyer une information à  un autre joueur" + System.lineSeparator()
-						+ "Tapez 'jeter' pour vous défausser d'une carte et récupérer un jeton d'information" + System.lineSeparator()
-						+ "Tapez 'jouer' pour jouer une carte" + System.lineSeparator());
+						+ "Tapez 'information' pour envoyer une information Ã  un autre joueur" + System.lineSeparator()
+						+ "Tapez 'jeter' pour vous dÃ©fausser d'une carte et rÃ©cupÃ©rer un jeton d'information"
+						+ System.lineSeparator() + "Tapez 'jouer' pour jouer une carte" + System.lineSeparator());
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class InteractionManager {
 		do {
 			view.displayChoices(message);
 			temp = s.get();
-		} while (predicate.test(temp));
+		} while (temp != null && predicate.test(temp));
 		return temp;
 	}
 }
