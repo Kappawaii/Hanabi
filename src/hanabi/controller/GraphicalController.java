@@ -23,6 +23,8 @@ public class GraphicalController implements Controller {
 
 	/**
 	 * Get int from char to int conversion (A = 1, B = 2, Z = 26)
+	 * 
+	 * @return Returns an Integer
 	 */
 	@Override
 	public Integer getInt() {
@@ -34,6 +36,11 @@ public class GraphicalController implements Controller {
 		}
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return Returns a Character
+	 */
 	private Character getChar() {
 		while (true) {
 			String input;
@@ -50,6 +57,11 @@ public class GraphicalController implements Controller {
 		}
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return Returns a String
+	 */
 	@Override
 	public String getString(Consumer<String> callback) {
 
@@ -85,6 +97,7 @@ public class GraphicalController implements Controller {
 		return e;
 	}
 
+	
 	private String getString() {
 		return getKeyEvent().getKey().toString();
 	}

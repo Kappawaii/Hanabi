@@ -27,8 +27,21 @@ public interface View {
 	public void displayEndGame();
 
 	public void displayEndofTurn();
+	
+	public void displayDepletedInfoTokens();
 
 	public void displayScore(int score, String result);
 
 	public void displayDefeat();
+	
+	public void displayIntel(String str);
+	
+	public void prepareBoard();
+	
+	public void refreshName(String str);
+	
+	public void displayChoices(String str);
+	
+	public void refreshStatusChoice(String str);
+	
 }

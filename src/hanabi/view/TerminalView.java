@@ -163,4 +163,22 @@ public class TerminalView implements View {
 		outStream.println("****** Vous avez perdu tout vos jetons rouges ******\n");
 	}
 
+	public void displayIntel(String str) {
+		printString( str );
+	}
+	
+	public void displayDepletedInfoTokens() {
+		printString("Jetons d'informations épuisés");
+	}
+	
+	public void prepareBoard() {}
+	
+	public void refreshName(String str) {}
+	
+	public void displayChoices(String str) {
+		printString( str );
+	}
+	
+	public void refreshStatusChoice(String str) {}
+	
 }
