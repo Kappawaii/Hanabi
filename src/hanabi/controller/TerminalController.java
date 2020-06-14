@@ -3,6 +3,7 @@ package hanabi.controller;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class TerminalController implements Controller {
 
@@ -30,7 +31,7 @@ public class TerminalController implements Controller {
 	/*
 	 * Returns a string from the user input
 	 */
-	public String getString() {
+	public String getString(Consumer<String> callback) {
 		return scanner.nextLine();
 	}
 

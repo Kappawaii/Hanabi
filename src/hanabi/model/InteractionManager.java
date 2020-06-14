@@ -5,38 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import hanabi.controller.TerminalController;
+import hanabi.controller.Controller;
 import hanabi.model.card.Card;
 import hanabi.utility.UtilityFunctions;
-import hanabi.view.GraphicalView;
-import hanabi.view.TerminalView;
+import hanabi.view.View;
 
 public class InteractionManager {
-	TerminalController controller;
-	TerminalView view;
-	
-	private GraphicalView GUIview;
-	/*private GraphicalController GUIcontrol;*/
+	Controller controller;
+	View view;
 
 	/**
 	 *
 	 */
-	public InteractionManager(TerminalController controller, TerminalView view ) {
+	public InteractionManager(Controller controller, View view) {
 		this.controller = Objects.requireNonNull(controller);
 		this.view = Objects.requireNonNull(view);
 	}
 
-	/**
-	 *
-	 */
-	public InteractionManager(TerminalController controller, TerminalView view, GraphicalView GUIview ) {
-		this.controller = Objects.requireNonNull(controller);
-		this.view = Objects.requireNonNull(view);
-		this.GUIview = GUIview;
-	}
 	/**
 	 *
 	 */
@@ -50,9 +39,10 @@ public class InteractionManager {
 	/**
 	 *
 	 */
-	public String getPlayerName(int playerNumber) {
+	public String getPlayerName(int playerNumber, Consumer<String> callback) {
 		Predicate<String> p = (name) -> (name == null || name.isBlank());
-		Supplier<String> s = () -> controller.getString();
+
+		Supplier<String> s = () -> controller.getString(callback);
 		return doMethodWhilePredicateSatisfied(p, s, "Entrez le nom du Joueur :" + (playerNumber + 1));
 	}
 
@@ -63,7 +53,7 @@ public class InteractionManager {
 		List<String> possibleActionList = Arrays.asList("information", "jeter", "jouer");
 		Predicate<String> predicate = (
 				action) -> (action == null || action.isBlank() || !possibleActionList.contains(action));
-		Supplier<String> supplier = () -> controller.getString();
+		Supplier<String> supplier = () -> controller.getString(null);
 		return doMethodWhilePredicateSatisfied(predicate, supplier,
 				name + ", que voulez vous faire ?\n"
 						+ "Tapez 'information' pour envoyer une information à un autre joueur\n"
@@ -79,7 +69,7 @@ public class InteractionManager {
 		Predicate<String> p = (playerName) -> playerName == null || playerName.isBlank()
 				|| UtilityFunctions.searchForPlayerByName(playerName, players).equals(Optional.empty())
 				|| playerNotToSelect.getName().equals(playerName);
-		Supplier<String> s = () -> controller.getString();
+		Supplier<String> s = () -> controller.getString(null);
 		String message = UtilityFunctions.listPlayerNamesExcept(players, playerNotToSelect.getName())
 				+ "\nTapez le nom du joueur auquel vous voulez envoyer une information :";
 		return UtilityFunctions.searchForPlayerByName(doMethodWhilePredicateSatisfied(p, s, message), players).get();
@@ -100,7 +90,6 @@ public class InteractionManager {
 	 */
 	Card selectCardInOwnCards(String basemsg, ArrayList<Card> cards) {
 		view.displayOwnCards(cards);
-		GUIview.displayOwnCards(cards);
 		return selectCard(basemsg, cards);
 	}
 
@@ -112,6 +101,7 @@ public class InteractionManager {
 		do {
 			view.printString(message);
 			temp = s.get();
+			System.out.println(temp);
 		} while (predicate.test(temp));
 		return temp;
 	}

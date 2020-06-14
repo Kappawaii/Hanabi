@@ -4,9 +4,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import fr.umlv.zen5.ApplicationContext;
 import fr.umlv.zen5.ScreenInfo;
+import hanabi.controller.Controller;
 import hanabi.controller.GraphicalController;
 import hanabi.controller.TerminalController;
 import hanabi.model.GameModel;
@@ -14,16 +16,15 @@ import hanabi.model.InteractionManager;
 import hanabi.model.Player;
 import hanabi.view.GraphicalView;
 import hanabi.view.TerminalView;
+import hanabi.view.View;
 
 public class Hanabi {
 
 	private GameModel game;
-	private TerminalView view;
-	private TerminalController controller;
-	
-	private GraphicalView GUIview;
-	/*private GraphicalController GUIcontrol;*/
-	
+	private View view;
+	private Controller controller;
+	/* private GraphicalController GUIcontrol; */
+
 	private InteractionManager interactionManager;
 
 	private int playerCount;
@@ -41,25 +42,30 @@ public class Hanabi {
 		controller = new TerminalController(Objects.requireNonNull(inputStream));
 		interactionManager = new InteractionManager(controller, view);
 		playerCount = interactionManager.getPlayerCount(2, 8);
+		addPlayers(game.getPlayerList(), null);
 	}
 
 	/*
 	 * Graphical version
 	 */
-	public Hanabi( ApplicationContext context , InputStream inputStream, PrintStream printStream ) {
+	public Hanabi(ApplicationContext context, InputStream inputStream, PrintStream printStream) {
 		this();
 		// TODO
 		ScreenInfo screenInfo = context.getScreenInfo();
 		float width = screenInfo.getWidth();
 		float height = screenInfo.getHeight();
-		
-		GUIview = GraphicalView.initGameGraphics(0, 0, (int) width, (int) height, context);
-		
-		view = new TerminalView(Objects.requireNonNull(printStream));
-		controller = new TerminalController(Objects.requireNonNull(inputStream));
-		
-		interactionManager = new InteractionManager(controller,view, GUIview);
+
+		view = GraphicalView.initGameGraphics(0, 0, (int) width, (int) height, context);
+
+		controller = new GraphicalController(context);
+
+		interactionManager = new InteractionManager(controller, view);
 		playerCount = interactionManager.getPlayerCount(2, 8);
+		addPlayers(game.getPlayerList(), (s) -> exampleCallBackMethod(s));
+	}
+
+	public void exampleCallBackMethod(String s) {
+		System.out.println(s);
 	}
 
 	/**
@@ -68,7 +74,6 @@ public class Hanabi {
 	 */
 	public void play() {
 		boolean lastTurn = false;
-		addPlayers(game.getPlayerList());
 		game.initNewgame();
 		boolean endgame = false;
 		while (game.getFuseTokens() > 0 && !endgame) {
@@ -76,18 +81,18 @@ public class Hanabi {
 			case 1:
 				// Victory !
 				view.displayEndGame();
-				GUIview.displayEndGame();
-				
-				view.displayScore(game.getScore(),getFinalWord( game.getScore() ));
-				GUIview.displayScore(game.getScore(),getFinalWord( game.getScore() ));
+				view.displayEndGame();
+
+				view.displayScore(game.getScore(), getFinalWord(game.getScore()));
+				view.displayScore(game.getScore(), getFinalWord(game.getScore()));
 				endgame = true;
 			case -1:
 				// Defeat
 				view.displayEndGame();
 				view.displayDefeat();
-				
-				GUIview.displayEndGame();
-				GUIview.displayDefeat();
+
+				view.displayEndGame();
+				view.displayDefeat();
 				endgame = true;
 				break;
 			case 0:
@@ -108,28 +113,30 @@ public class Hanabi {
 	public int oneTurn(boolean lastTurn) {
 		for (Player p : game.getPlayerList()) {
 			view.splashScreen(p);
-			GUIview.splashScreen( p );
+			view.splashScreen(p);
 			controller.waitForLineBreak();
-			
-			GUIview.prepareBoard();
-			
+
+			// TODO fix
+			if (view instanceof GraphicalView) {
+				((GraphicalView) view).prepareBoard();
+			}
+
 			displayCardsOfAllPlayersBut(p);
-			
-			GUIview.displayFireworkStatus(game.getFireworkManager().getFireworkStatus());
-			GUIview.displayTokensRemaining(game.getInfoTokens(), game.getFuseTokens());
-			GUIview.displayDiscardedCards(game.getCardManager().getDiscardedCards());
-			
-			
+
 			view.displayFireworkStatus(game.getFireworkManager().getFireworkStatus());
 			view.displayTokensRemaining(game.getInfoTokens(), game.getFuseTokens());
 			view.displayDiscardedCards(game.getCardManager().getDiscardedCards());
-			
-			p.playTurn( game.getInfoTokens() );
-			
-			//GUIview.displayEndofTurn();
+
+			view.displayFireworkStatus(game.getFireworkManager().getFireworkStatus());
+			view.displayTokensRemaining(game.getInfoTokens(), game.getFuseTokens());
+			view.displayDiscardedCards(game.getCardManager().getDiscardedCards());
+
+			p.playTurn(game.getInfoTokens());
+
+			// GUIview.displayEndofTurn();
 			view.displayEndofTurn();
 			controller.waitForLineBreak();
-			
+
 			if (game.instantVictoryState()) {
 				return 1;
 			}
@@ -150,15 +157,16 @@ public class Hanabi {
 	/**
 	 * Add the players at the start of the game.
 	 */
-	private void addPlayers(ArrayList<Player> players) {
+	private void addPlayers(ArrayList<Player> players, Consumer<String> callback) {
 		int i = 0;
 		while (i < playerCount) {
-			Player temp = new Player(game, interactionManager.getPlayerName(i), controller, view, GUIview,interactionManager);
+			Player temp = new Player(game, interactionManager.getPlayerName(i, callback), controller, view,
+					interactionManager);
 			if (!players.contains(temp)) {
 				players.add(temp);
 				i++;
 			} else {
-				view.printString("Le joueur existe déjà , veuillez choisir un autre nom");
+				view.printString("Le joueur existe dÃ©jÃ , veuillez choisir un autre nom");
 			}
 		}
 	}
@@ -169,12 +177,10 @@ public class Hanabi {
 	 */
 	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
 		ArrayList<Player> players = game.getPlayerList();
-		// Remove null
-		GUIview.displayCardsOfPlayer( players , playerNotToDisplay );
-		view.displayCardsOfPlayer( players , playerNotToDisplay);
+		view.displayCardsOfPlayer(players, playerNotToDisplay);
 	}
-	
-	private String getFinalWord( int score ) {
+
+	private String getFinalWord(int score) {
 		if (score <= 5) {
 			return " Horrible ! La foule hue ! Vous ferez mieux la prochaine fois ! ";
 		} else if (score <= 10) {
@@ -188,7 +194,7 @@ public class Hanabi {
 		} else if (score <= 25) {
 			return " LEGENDAIRE ! Tout le monde est sans voix ! Bien jouÃ© !  ";
 		} else {
-			return " Wow ! Vous avez même obtenu un score impossible ! Trop fort ! ";
+			return " Wow ! Vous avez mï¿½me obtenu un score impossible ! Trop fort ! ";
 		}
 	}
 }
