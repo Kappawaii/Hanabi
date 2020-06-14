@@ -41,7 +41,7 @@ public class Hanabi {
 		view = new TerminalView(Objects.requireNonNull(printStream));
 		controller = new TerminalController(Objects.requireNonNull(inputStream));
 		interactionManager = new InteractionManager(controller, view);
-		playerCount = interactionManager.getPlayerCount(2, 8);
+		playerCount = interactionManager.getPlayerCount(2, 5);
 		addPlayers(game.getPlayerList(), null);
 	}
 
@@ -50,22 +50,22 @@ public class Hanabi {
 	 */
 	public Hanabi(ApplicationContext context, InputStream inputStream, PrintStream printStream) {
 		this();
-		// TODO
+		
 		ScreenInfo screenInfo = context.getScreenInfo();
 		float width = screenInfo.getWidth();
 		float height = screenInfo.getHeight();
 
-		view = GraphicalView.initGameGraphics(0, 0, (int) width, (int) height, context);
+		view = GraphicalView.initGameGraphics((int) width, (int) height, context);
 
 		controller = new GraphicalController(context);
 
 		interactionManager = new InteractionManager(controller, view);
-		playerCount = interactionManager.getPlayerCount(2, 8);
-		addPlayers(game.getPlayerList(), (s) -> exampleCallBackMethod(s));
+		playerCount = interactionManager.getPlayerCount(2, 5);
+		addPlayers( game.getPlayerList(), (s) -> displayNameTyping(s) );
 	}
 
-	public void exampleCallBackMethod(String s) {
-		System.out.println(s);
+	public void displayNameTyping(String s) {
+		view.refreshName( s );
 	}
 
 	/**
@@ -81,16 +81,10 @@ public class Hanabi {
 			case 1:
 				// Victory !
 				view.displayEndGame();
-				view.displayEndGame();
-
-				view.displayScore(game.getScore(), getFinalWord(game.getScore()));
 				view.displayScore(game.getScore(), getFinalWord(game.getScore()));
 				endgame = true;
 			case -1:
 				// Defeat
-				view.displayEndGame();
-				view.displayDefeat();
-
 				view.displayEndGame();
 				view.displayDefeat();
 				endgame = true;
@@ -113,27 +107,19 @@ public class Hanabi {
 	public int oneTurn(boolean lastTurn) {
 		for (Player p : game.getPlayerList()) {
 			view.splashScreen(p);
-			view.splashScreen(p);
 			controller.waitForLineBreak();
-
-			// TODO fix cette merde
-			if (view instanceof GraphicalView) {
-				((GraphicalView) view).prepareBoard();
-			}
-
+			
+			// Cleans the screen for the graphical view, makes no difference for the terminal view.
+			view.prepareBoard();
+			
 			displayCardsOfAllPlayersBut(p);
 
 			view.displayFireworkStatus(game.getFireworkManager().getFireworkStatus());
 			view.displayTokensRemaining(game.getInfoTokens(), game.getFuseTokens());
 			view.displayDiscardedCards(game.getCardManager().getDiscardedCards());
 
-			view.displayFireworkStatus(game.getFireworkManager().getFireworkStatus());
-			view.displayTokensRemaining(game.getInfoTokens(), game.getFuseTokens());
-			view.displayDiscardedCards(game.getCardManager().getDiscardedCards());
+			p.playTurn( game.getInfoTokens() );
 
-			p.playTurn(game.getInfoTokens());
-
-			// GUIview.displayEndofTurn();
 			view.displayEndofTurn();
 			controller.waitForLineBreak();
 

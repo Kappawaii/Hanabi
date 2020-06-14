@@ -42,14 +42,10 @@ public class Player {
 		if (intelReceived.size() != 0) {
 			displayInformation();
 		}
-		switch (interactionManager.getAction(name)) {
+		switch (interactionManager.getAction(name , (s) -> displayChoice(s) )) {
 		case "information":
 			if (infoTokens < 1) {
-				// TODO FIX cette merde
-				if (view instanceof GraphicalView) {
-					((GraphicalView) view).displayDepletedInfoTokens();
-				}
-				view.printString("Jetons d'informations Ã©puisÃ©s");
+				view.displayDepletedInfoTokens();
 				playTurn(infoTokens);
 			} else {
 				giveInformation();
@@ -76,7 +72,7 @@ public class Player {
 	 */
 	private void giveInformation() {
 		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
-		view.printString("Entrez le message ï¿½ envoyer ï¿½ " + target.name);
+		view.printString("Entrez le message à envoyer à " + target.name);
 		game.giveInformationToPlayer(target, controller.getString(null));
 	}
 
@@ -85,7 +81,7 @@ public class Player {
 	 * Also takes a new card.
 	 */
 	private void playCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  jouer :" + System.lineSeparator(),
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à jouer :" + System.lineSeparator(),
 				cards);
 		if (cards.remove(c)) {
 			Tuple<Optional<Card>, Boolean> tuple = game.playCard(c);
@@ -105,7 +101,7 @@ public class Player {
 	 * takes a new card.
 	 */
 	private void discardCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  dÃ©fausser :" + System.lineSeparator(),
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :" + System.lineSeparator(),
 				cards);
 		Optional<Card> newCard;
 		if (cards.remove(c)) {
@@ -124,9 +120,7 @@ public class Player {
 		for (String s : intelReceived) {
 			strBuilder.append(s).append(System.lineSeparator());
 		}
-		// TODO FIX CETTE MERDE
-		((GraphicalView) view).displayIntel(strBuilder.toString());
-		view.printString(strBuilder.toString());
+		view.displayIntel(strBuilder.toString());
 	}
 
 	@Override
@@ -138,14 +132,14 @@ public class Player {
 	 * Can display a simple message if the card was successfully placed.
 	 */
 	private void displaySuccess(Card c) {
-		view.printString("REUSSITE ! : Carte " + c + " posÃ©e avec succÃ¨s !");
+		view.printString("REUSSITE ! : Carte " + c + " posée avec succès !");
 	}
 
 	/**
 	 * Can display a simple message if the card was dropped in the discarded cards.
 	 */
 	private void displayFail(Card c) {
-		view.printString("Ã©chec. Carte " + c + " part dans la dÃ©fausse.");
+		view.printString("échec. Carte " + c + " part dans la défausse.");
 	}
 
 	/**
@@ -155,6 +149,13 @@ public class Player {
 		return name;
 	}
 
+	/**
+	 * 
+	 */
+	public void displayChoice(String s) {
+		view.refreshStatusChoice( s );
+	}
+	
 	/**
 	 * @return Returns the cards in the hands of the player.
 	 */
