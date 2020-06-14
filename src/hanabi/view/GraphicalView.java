@@ -32,12 +32,13 @@ public class GraphicalView implements View {
 	private final ApplicationContext appContext;
 
 	/**
-	 * Constructor for the GraphicalView. Use the initGameGraphics method to get a new instance.
+	 * Constructor for the GraphicalView. Use the initGameGraphics method to get a
+	 * new instance.
 	 * 
 	 * @return Returns a GraphicalView instance
 	 */
-	private GraphicalView(int width, int height, int cardWidth, int playerSpaceWidth,
-			int playerSpaceHeight, ApplicationContext context) {
+	private GraphicalView(int width, int height, int cardWidth, int playerSpaceWidth, int playerSpaceHeight,
+			ApplicationContext context) {
 		this.width = width;
 		this.height = height;
 		this.cardSize = cardWidth;
@@ -64,13 +65,11 @@ public class GraphicalView implements View {
 	 * 
 	 * @return Returns a GraphicalView instance
 	 */
-	public static GraphicalView initGameGraphics( int width, int height,
-			ApplicationContext context) {
+	public static GraphicalView initGameGraphics(int width, int height, ApplicationContext context) {
 		int cardSize = (int) (width * 1 / 20);
-		int playerSpaceHeight = (int) (height * 8 / 5 / 4 / 3); 
+		int playerSpaceHeight = (int) (height * 8 / 5 / 4 / 3);
 		int playerSpaceWidth = (int) (width / 3);
-		return new GraphicalView(width, height, cardSize, playerSpaceWidth, playerSpaceHeight,
-				context);
+		return new GraphicalView(width, height, cardSize, playerSpaceWidth, playerSpaceHeight, context);
 	}
 
 	/**
@@ -97,8 +96,8 @@ public class GraphicalView implements View {
 			int y = height / 2;
 			graphics.setFont(fontPrintString);
 			graphics.setColor(Color.WHITE);
-			
-			drawLongText(graphics, str, (width / 3) + marginHorizontal , y );	
+
+			drawLongText(graphics, str, (width / 3) + marginHorizontal, y);
 		});
 	}
 
@@ -108,7 +107,7 @@ public class GraphicalView implements View {
 	@Override
 	public void splashScreen(Player p) {
 		printString(
-				"Au tour de : " + p.getName() + System.lineSeparator() + " Appuyez sur entrï¿½e pour jouer votre tour");
+				"Au tour de : " + p.getName() + System.lineSeparator() + " Appuyez sur entrÃ©e pour jouer votre tour");
 	}
 
 	/**
@@ -170,7 +169,8 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * Displays the other player's cards. Doesn't display the cards of the current player.
+	 * Displays the other player's cards. Doesn't display the cards of the current
+	 * player.
 	 */
 	@Override
 	public void displayCardsOfPlayer(ArrayList<Player> players, Player playerNotToDisplay) {
@@ -189,7 +189,8 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * Displays a deck of black cards, doesn't give any form of intel on the number or the color.
+	 * Displays a deck of black cards, doesn't give any form of intel on the number
+	 * or the color.
 	 */
 	@Override
 	public void displayOwnCards(ArrayList<Card> cards) {
@@ -207,7 +208,8 @@ public class GraphicalView implements View {
 	 * Unused
 	 */
 	@Override
-	public void displayEndGame() {}
+	public void displayEndGame() {
+	}
 
 	/**
 	 * Splash screen for the end of the turn
@@ -233,7 +235,7 @@ public class GraphicalView implements View {
 	@Override
 	public void displayDefeat() {
 		StringBuilder stringBuilder = new StringBuilder("DEFAITE" + System.lineSeparator());
-		stringBuilder.append("Vous avez perdu tout vos jetons rouge !");
+		stringBuilder.append("Vous avez perdu tout vos jetons rouges !");
 		printString(stringBuilder.toString());
 	}
 
@@ -248,8 +250,8 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * Draws a whole deck. Uses the margin to separate cards.
-	 * Goes from left to right.
+	 * Draws a whole deck. Uses the margin to separate cards. Goes from left to
+	 * right.
 	 */
 	private void drawDeck(Graphics2D graphics, ArrayList<Card> cards, int x, int y, boolean showCards) {
 		int i = marginHorizontal;
@@ -292,13 +294,13 @@ public class GraphicalView implements View {
 			graphics.setColor(Color.LIGHT_GRAY);
 
 			/* Horizontal line */
-			graphics.fillRect(0, 6 * height / 10, (width / 3) + (2*marginHorizontal), 3);
+			graphics.fillRect(0, 6 * height / 10, (width / 3) + (2 * marginHorizontal), 3);
 		});
 	}
 
 	/**
-	 * Displays a String in the bottom left corner of the screen.
-	 * Goes through the informations the players has and displays them all.
+	 * Displays a String in the bottom left corner of the screen. Goes through the
+	 * informations the players has and displays them all.
 	 */
 	@Override
 	public void displayIntel(String string) {
@@ -317,7 +319,7 @@ public class GraphicalView implements View {
 	 */
 	@Override
 	public void displayDepletedInfoTokens() {
-		displayBottomRightCorner( " Vous avez épuisé vos jetons d'informations " );
+		displayBottomRightCorner(" Vous avez Ã©puisÃ© vos jetons d'informations ");
 	}
 
 	/**
@@ -325,9 +327,9 @@ public class GraphicalView implements View {
 	 */
 	@Override
 	public void refreshName(String str) {
-		printString( "Nom du joueur : " + str + System.lineSeparator() + " Appuyez sur ESPACE pour valider votre choix");
+		printString("Nom du joueur : " + str + System.lineSeparator() + " Appuyez sur ESPACE pour valider votre choix");
 	}
-	
+
 	/**
 	 * Used in the interaction manager
 	 */
@@ -335,30 +337,30 @@ public class GraphicalView implements View {
 	public void displayChoices(String str) {
 		displayBottomRightCorner(str);
 	}
-	
+
 	/**
 	 * Displays the message given in argument in the bottom of the window
 	 */
 	private void displayBottomRightCorner(String str) {
 		appContext.renderFrame(graphics -> {
-			graphics.setColor( backgroundColor );
-			graphics.fillRect( width/3, 8 * height / 10, (width / 3), 2 * height / 10);
+			graphics.setColor(backgroundColor);
+			graphics.fillRect(width / 3, 8 * height / 10, (width / 3), 2 * height / 10);
 
 			graphics.setColor(Color.WHITE);
 			graphics.setFont(font);
-			drawLongText(graphics, str, width/3, 8 * height / 10 );	
+			drawLongText(graphics, str, width / 3, 8 * height / 10);
 		});
 	}
-	
+
 	/**
 	 * Used to break the text and actually consider the line separators
 	 */
-	private void drawLongText(Graphics2D graphics , String str, int x, int y) {
-		for (String newLine : str.split( System.lineSeparator()) ) {
+	private void drawLongText(Graphics2D graphics, String str, int x, int y) {
+		for (String newLine : str.split(System.lineSeparator())) {
 			graphics.drawString(newLine, x, y += graphics.getFontMetrics().getHeight());
 		}
 	}
-	
+
 	/**
 	 * Prints the text in the bottom of the screen
 	 */
@@ -367,7 +369,7 @@ public class GraphicalView implements View {
 		appContext.renderFrame(graphics -> {
 			graphics.setColor(Color.WHITE);
 			graphics.setFont(font);
-			graphics.drawString(str, (width/3)+marginHorizontal, height - marginVertical);
+			graphics.drawString(str, (width / 3) + marginHorizontal, height - marginVertical);
 		});
 	}
 }
