@@ -18,7 +18,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-
+		Application.run(Color.LIGHT_GRAY, Main::startGraphical);
 		if (args.length == 1) {
 			String input = args[0];
 			if (input.equals("g")) {

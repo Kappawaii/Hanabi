@@ -76,7 +76,7 @@ public class GraphicalController implements Controller {
 				callback.accept(stringBuilder.toString());
 			}
 		}
-		return stringBuilder.toString();
+		return stringBuilder.toString().toLowerCase();
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class GraphicalController implements Controller {
 	/**
 	 * Used to catch characters.
 	 * 
-	 * @return Returns a String
+	 * @return a String
 	 */
 	private String getString() {
 		return getKeyEvent().getKey().toString();

@@ -64,12 +64,12 @@ public class InteractionManager {
 	/**
 	 * Doesn't let the user select the Player given as parameter
 	 */
-	protected Player selectPlayer(Player playerNotToSelect, ArrayList<Player> players) {
+	protected Player selectPlayer(Player playerNotToSelect, ArrayList<Player> players, Consumer<String> callback) {
 		view.printString("Tapez le nom du joueur");
 		Predicate<String> p = (playerName) -> playerName == null || playerName.isBlank()
 				|| UtilityFunctions.searchForPlayerByName(playerName, players).equals(Optional.empty())
 				|| playerNotToSelect.getName().equals(playerName);
-		Supplier<String> s = () -> controller.getString(null);
+		Supplier<String> s = () -> controller.getString(callback);
 		String message = UtilityFunctions.listPlayerNamesExcept(players, playerNotToSelect.getName())
 				+ "\nTapez le nom du joueur auquel vous voulez envoyer une information :";
 		return UtilityFunctions.searchForPlayerByName(doMethodWhilePredicateSatisfied(p, s, message), players).get();

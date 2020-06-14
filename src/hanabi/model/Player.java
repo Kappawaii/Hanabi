@@ -70,9 +70,9 @@ public class Player {
 	 * Selects another player to give an information to.
 	 */
 	private void giveInformation() {
-		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
-		view.printString("Entrez le message Ã  envoyer : " + target.name);
-		game.giveInformationToPlayer(target, controller.getString(null));
+		Player target = interactionManager.selectPlayer(this, game.getPlayerList() , (s)-> view.printString(s));
+		view.printString("Entrez le message à  envoyer : " + target.name);
+		game.giveInformationToPlayer(target, controller.getString((s)-> view.printString(s)));
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Player {
 	 * Also takes a new card.
 	 */
 	private void playCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  jouer :" + System.lineSeparator(),
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à jouer :" + System.lineSeparator(),
 				cards);
 		if (cards.remove(c)) {
 			Tuple<Optional<Card>, Boolean> tuple = game.playCard(c);
@@ -100,7 +100,7 @@ public class Player {
 	 * takes a new card.
 	 */
 	private void discardCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  dÃ©fausser :" + System.lineSeparator(),
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :" + System.lineSeparator(),
 				cards);
 		Optional<Card> newCard;
 		if (cards.remove(c)) {
