@@ -101,7 +101,6 @@ public class InteractionManager {
 		do {
 			view.printString(message);
 			temp = s.get();
-			System.out.println(temp);
 		} while (predicate.test(temp));
 		return temp;
 	}
