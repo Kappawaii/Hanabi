@@ -31,6 +31,11 @@ public class GraphicalView implements View {
 
 	private final ApplicationContext appContext;
 
+	/**
+	 * Constructor for the GraphicalView. Use the initGameGraphics method to get a new instance.
+	 * 
+	 * @return Returns a GraphicalView instance
+	 */
 	private GraphicalView(int width, int height, int cardWidth, int playerSpaceWidth,
 			int playerSpaceHeight, ApplicationContext context) {
 		this.width = width;
@@ -55,7 +60,9 @@ public class GraphicalView implements View {
 	}
 
 	/**
+	 * Static method that calculates sizes useful for the interface.
 	 * 
+	 * @return Returns a GraphicalView instance
 	 */
 	public static GraphicalView initGameGraphics( int width, int height,
 			ApplicationContext context) {
@@ -67,7 +74,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Displays the title screen of the game
 	 */
 	@Override
 	public void splashScreen() {
@@ -81,7 +88,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Is used in order to clear the whole window and print a text in the middle.
 	 */
 	@Override
 	public void printString(String str) {
@@ -96,7 +103,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Prints a splash screen announcing the next player.
 	 */
 	@Override
 	public void splashScreen(Player p) {
@@ -105,7 +112,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Displays the pile of cards that were successfully played on the table.
 	 */
 	@Override
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus) {
@@ -126,7 +133,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Displays blue rounds and red rounds symbolizing the remaining tokens.
 	 */
 	@Override
 	public void displayTokensRemaining(int infoTokens, int fuseTokens) {
@@ -137,13 +144,13 @@ public class GraphicalView implements View {
 			}
 			x = width;
 			for (int i = 1; i <= fuseTokens; i++) {
-				drawToken(graphics, x - (i * tokenRadius) - (tokenRadius / 2), y, Color.MAGENTA);
+				drawToken(graphics, x - (i * tokenRadius) - (tokenRadius / 2), y, Color.RED);
 			}
 		});
 	}
 
 	/**
-	 * 
+	 * Displays the discarded cards in the bottom of the screen
 	 */
 	@Override
 	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
@@ -155,7 +162,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Draws a single token with the coordinates and the color.
 	 */
 	private void drawToken(Graphics2D graphics, int x, int y, Color color) {
 		graphics.setColor(color);
@@ -163,7 +170,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * Displays the player's cards.
+	 * Displays the other player's cards. Doesn't display the cards of the current player.
 	 */
 	@Override
 	public void displayCardsOfPlayer(ArrayList<Player> players, Player playerNotToDisplay) {
@@ -182,7 +189,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Displays a deck of black cards, doesn't give any form of intel on the number or the color.
 	 */
 	@Override
 	public void displayOwnCards(ArrayList<Card> cards) {
@@ -197,13 +204,13 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Unused
 	 */
 	@Override
 	public void displayEndGame() {}
 
 	/**
-	 * 
+	 * Splash screen for the end of the turn
 	 */
 	@Override
 	public void displayEndofTurn() {
@@ -211,7 +218,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * End screen that displays the score
 	 */
 	@Override
 	public void displayScore(int score, String result) {
@@ -221,7 +228,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Displays a fail screen
 	 */
 	@Override
 	public void displayDefeat() {
@@ -231,7 +238,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Cleans the window and removes everything
 	 */
 	private void clearWindow() {
 		appContext.renderFrame(graphics -> {
@@ -241,7 +248,8 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Draws a whole deck. Uses the margin to separate cards.
+	 * Goes from left to right.
 	 */
 	private void drawDeck(Graphics2D graphics, ArrayList<Card> cards, int x, int y, boolean showCards) {
 		int i = marginHorizontal;
@@ -258,7 +266,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Draws a single card with squares and rectangles
 	 */
 	private void drawCard(Graphics2D graphics, Color color, int numberCard, int x, int y) {
 		graphics.setColor(Color.WHITE);
@@ -275,7 +283,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Useful to clear the window and add anything we want before the turn begins
 	 */
 	@Override
 	public void prepareBoard() {
@@ -289,7 +297,8 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Displays a String in the bottom left corner of the screen.
+	 * Goes through the informations the players has and displays them all.
 	 */
 	@Override
 	public void displayIntel(String string) {
@@ -304,7 +313,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Little alert
 	 */
 	@Override
 	public void displayDepletedInfoTokens() {
@@ -312,7 +321,7 @@ public class GraphicalView implements View {
 	}
 
 	/**
-	 * 
+	 * Refresh the typing in the title menu
 	 */
 	@Override
 	public void refreshName(String str) {
@@ -320,7 +329,7 @@ public class GraphicalView implements View {
 	}
 	
 	/**
-	 * 
+	 * Used in the interaction manager
 	 */
 	@Override
 	public void displayChoices(String str) {
@@ -328,7 +337,7 @@ public class GraphicalView implements View {
 	}
 	
 	/**
-	 * 
+	 * Displays the message given in argument in the bottom of the window
 	 */
 	private void displayBottomRightCorner(String str) {
 		appContext.renderFrame(graphics -> {
@@ -342,7 +351,7 @@ public class GraphicalView implements View {
 	}
 	
 	/**
-	 * 
+	 * Used to break the text and actually consider the line separators
 	 */
 	private void drawLongText(Graphics2D graphics , String str, int x, int y) {
 		for (String newLine : str.split( System.lineSeparator()) ) {
@@ -351,7 +360,7 @@ public class GraphicalView implements View {
 	}
 	
 	/**
-	 * 
+	 * Prints the text in the bottom of the screen
 	 */
 	@Override
 	public void refreshStatusChoice(String str) {

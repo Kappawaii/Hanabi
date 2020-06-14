@@ -76,7 +76,9 @@ public class InteractionManager {
 	}
 
 	/**
-	 *
+	 * Selects a card in the deck of the player 
+	 * 
+	 * @return a Card
 	 */
 	Card selectCard(String basemsg, ArrayList<Card> cards) {
 		Predicate<Integer> predicate = (input) -> (input == null || input < 0 || input > cards.size() - 1);

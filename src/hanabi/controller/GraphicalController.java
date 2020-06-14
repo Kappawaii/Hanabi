@@ -15,6 +15,8 @@ public class GraphicalController implements Controller {
 	private final static char charReference = 'A' - 1;
 
 	/**
+	 * Controller for the Zen5 graphical interface.
+	 * 
 	 * @param context
 	 */
 	public GraphicalController(ApplicationContext context) {
@@ -37,7 +39,7 @@ public class GraphicalController implements Controller {
 	}
 
 	/**
-	 * 
+	 * Is used in order to catch characters from the input.
 	 * 
 	 * @return Returns a Character
 	 */
@@ -58,7 +60,8 @@ public class GraphicalController implements Controller {
 	}
 
 	/**
-	 * 
+	 * Uses the getChar() method in order to create a String.
+	 * Is used for the graphical version and get names or instructions.
 	 * 
 	 * @return Returns a String
 	 */
@@ -77,7 +80,7 @@ public class GraphicalController implements Controller {
 	}
 
 	/**
-	 * 
+	 * Allows the program to wait for the player to press space in order to continue
 	 */
 	@Override
 	public void waitForLineBreak() {
@@ -85,6 +88,10 @@ public class GraphicalController implements Controller {
 		}
 	}
 
+	/**
+	 * Is used to make sure a key is pressed to catch this event.
+	 * @return Returns an Event
+	 */
 	private Event getKeyEvent() {
 		Event e = null;
 		while (e == null) {
@@ -97,7 +104,11 @@ public class GraphicalController implements Controller {
 		return e;
 	}
 
-	
+	/**
+	 * Used to catch characters.
+	 * 
+	 * @return Returns a String
+	 */
 	private String getString() {
 		return getKeyEvent().getKey().toString();
 	}
