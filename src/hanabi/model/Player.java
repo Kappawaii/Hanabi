@@ -138,7 +138,6 @@ public class Player {
 	 * Can display a simple message if the card was successfully placed.
 	 */
 	private void displaySuccess(Card c) {
-		// TODO FIX CETTE MERDE
 		view.printString("REUSSITE ! : Carte " + c + " posée avec succès !");
 	}
 
@@ -146,7 +145,6 @@ public class Player {
 	 * Can display a simple message if the card was dropped in the discarded cards.
 	 */
 	private void displayFail(Card c) {
-		// TODO FIX CETTE MERDE
 		view.printString("échec. Carte " + c + " part dans la défausse.");
 	}
 

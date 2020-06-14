@@ -116,7 +116,7 @@ public class Hanabi {
 			view.splashScreen(p);
 			controller.waitForLineBreak();
 
-			// TODO fix
+			// TODO fix cette merde
 			if (view instanceof GraphicalView) {
 				((GraphicalView) view).prepareBoard();
 			}
