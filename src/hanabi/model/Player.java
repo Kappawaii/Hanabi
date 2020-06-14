@@ -79,7 +79,7 @@ public class Player {
 	 */
 	private void giveInformation() {
 		Player target = interactionManager.selectPlayer(this, game.getPlayerList());
-		view.printString("Entrez le message Ã  envoyer Ã  " + target.name);
+		view.printString("Entrez le message à  envoyer à  " + target.name);
 		game.giveInformationToPlayer(target, controller.getString());
 	}
 
@@ -88,7 +88,7 @@ public class Player {
 	 * Also takes a new card.
 	 */
 	private void playCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  jouer :\n", cards);
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  jouer :" + System.lineSeparator(), cards);
 		if (cards.remove(c)) {
 			Tuple<Optional<Card>, Boolean> tuple = game.playCard(c);
 			if (tuple.getX().isPresent()) {
@@ -107,7 +107,7 @@ public class Player {
 	 * takes a new card.
 	 */
 	private void discardCard() {
-		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte Ã  dÃ©fausser :\n", cards);
+		Card c = interactionManager.selectCardInOwnCards("Choisissez la carte à défausser :" + System.lineSeparator(), cards);
 		Optional<Card> newCard;
 		if (cards.remove(c)) {
 			newCard = game.discardCard(c);
@@ -120,12 +120,12 @@ public class Player {
 	 * Can display the informations the player has received from the others.
 	 */
 	private void displayInformation() {
-		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :\n");
+		StringBuilder strBuilder = new StringBuilder("Voici les informations dont vous disposez :" + System.lineSeparator() );
 		for (String s : intelReceived) {
-			strBuilder.append(s).append("\n");
+			strBuilder.append(s).append( System.lineSeparator() );
 		}
-		GUIview.displayIntel(strBuilder.toString());
-		view.printString(strBuilder.toString());
+		GUIview.displayIntel( strBuilder.toString() );
+		view.printString( strBuilder.toString() );
 	}
 
 	@Override
@@ -137,16 +137,16 @@ public class Player {
 	 * Can display a simple message if the card was successfully placed.
 	 */
 	private void displaySuccess(Card c) {
-		GUIview.printString("REUSSITE ! : Carte " + c + " posï¿½e avec succï¿½s !");
-		view.printString("REUSSITE ! : Carte " + c + " posï¿½e avec succï¿½s !");
+		GUIview.printString("REUSSITE ! : Carte " + c + " posée avec succès !");
+		view.printString("REUSSITE ! : Carte " + c + " posée avec succès !");
 	}
 
 	/**
 	 * Can display a simple message if the card was dropped in the discarded cards.
 	 */
 	private void displayFail(Card c) {
-		GUIview.printString("ï¿½chec. Carte " + c + " part dans la dï¿½fausse.");
-		view.printString("ï¿½chec. Carte " + c + " part dans la dï¿½fausse.");
+		GUIview.printString("Échec. Carte " + c + " part dans la défausse.");
+		view.printString("Échec. Carte " + c + " part dans la défausse.");
 	}
 
 	/**

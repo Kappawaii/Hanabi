@@ -1,12 +1,14 @@
 package hanabi.view;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import fr.umlv.zen5.ApplicationContext;
@@ -24,7 +26,14 @@ public class GraphicalView implements View {
 	private final int tokenRadius;
 	private final int playerSpaceWidth;
 	private final int playerSpaceHeight;
+	private final int marginHorizontal;
+	private final int marginVertical;
+	
+	private final Map<CardColor,Color> colors;
 	private final Color backgroundColor;
+	private final Font fontPrintString;
+	private final Font font;
+	
 	private final ApplicationContext appContext;
 	
 		
@@ -36,53 +45,70 @@ public class GraphicalView implements View {
 		this.cardSize = cardWidth;
 		this.playerSpaceWidth = playerSpaceWidth;
 		this.playerSpaceHeight = playerSpaceHeight;
-		this.backgroundColor = Color.LIGHT_GRAY;
+		this.backgroundColor = Color.DARK_GRAY;
 		this.tokenRadius = 30;
+		this.marginHorizontal = 30;
+		this.marginVertical = 30;
 		this.appContext = context;
+		this.fontPrintString = new Font("Arial", Font.BOLD, 28);
+		this.font = new Font("Arial", Font.BOLD, 20);
+		this.colors = new HashMap<CardColor,Color>();
+		colors.put(CardColor.vert, Color.GREEN);
+		colors.put(CardColor.rouge, Color.RED);
+		colors.put(CardColor.bleu, Color.CYAN);
+		colors.put(CardColor.blanc, Color.LIGHT_GRAY);
+		colors.put(CardColor.jaune, Color.ORANGE);
 		splashScreen();
 	}
 	
 	public static GraphicalView initGameGraphics(int xOrigin, int yOrigin, int width, int height,  ApplicationContext context) {
 		int cardSize = (int) ( width * 1 / 20 );
-		int playerSpaceHeight = (int) ( height * 4 / 5 / 4 ); // TODO : change this
+		int playerSpaceHeight = (int) ( height * 8 / 5 / 4 / 3 ); // TODO : change this
 		int playerSpaceWidth = (int) ( width / 3 ); // TODO : change this.
 		return new GraphicalView(xOrigin, yOrigin, width, height, cardSize, playerSpaceWidth , playerSpaceHeight, context);
 	}
 	
 	public void splashScreen() {
-		printString( "Bienvenue sur Hanabi !" );
+		printString( "Bienvenue sur Hanabi !" + System.lineSeparator() + " Choisissez le nombre de joueurs : " + System.lineSeparator() );
 	}
 	
 	@Override
 	public void printString(String str) {
 		clearWindow();
 		appContext.renderFrame( graphics -> {
-			graphics.drawString(str, width/2, height/2);
+			int y = height/2;
+			graphics.setFont( fontPrintString );
+			graphics.setColor( Color.WHITE );
+			for (String newLine : str.split( System.lineSeparator() )) {
+				graphics.drawString( newLine, (width/3) + marginHorizontal, y += graphics.getFontMetrics().getHeight() );
+			}
 		});
 	}
 	
 	public void splashScreen( Player p ) {
-		printString( "Au tour de : " + p.getName() + "\n Appuyez sur entrée pour jouer votre tour" );
+		printString( "Au tour de : " + p.getName() + System.lineSeparator() + " Appuyez sur entrée pour jouer votre tour" );
 	}
 
 	public void displayFireworkStatus(HashMap<CardColor, Integer> fireworkStatus) {
 		appContext.renderFrame( graphics -> {
+			int x=(int) (width - 2*marginHorizontal - cardSize), y = marginVertical;
 			for (Entry<CardColor, Integer> entry : fireworkStatus.entrySet()) {
-				// entry.getValue()
-				// entry.getKey().toString()
-				int x=(int) (width/3) + 45, y=15;
-				for( int i=1; i <= entry.getValue();i++ ) {
-					drawCard(graphics, entry.getKey() , entry.getValue() , x, y);
-					y += 15; 
+				y = marginVertical;
+				for( int i=1; i < entry.getValue();i++ ) {
+					drawCard(graphics, colors.get( entry.getKey() ) , entry.getValue() , x, y);
+					y += (marginVertical/2); 
 				}
-				x += cardSize + 30;
+				graphics.setColor( backgroundColor );
+				graphics.fillRect(x, y, cardSize, cardSize );
+				drawCard(graphics, colors.get( entry.getKey() ) , entry.getValue() , x, y);
+				x -= (cardSize + marginHorizontal);
 			}
 		});
 	}
 
 	public void displayTokensRemaining(int infoTokens, int fuseTokens) {
 		appContext.renderFrame( graphics -> {
-			int x = (int) (width/2) ,y = (height*12/20);
+			int x = (int) (2*width/3) ,y = (height*12/20);
 			for(int i=1; i <= infoTokens; i++ ) {
 				drawToken(graphics, x+ (i * tokenRadius) + ( tokenRadius/2 ), y, Color.BLUE);
 			}
@@ -96,7 +122,6 @@ public class GraphicalView implements View {
 	public void displayDiscardedCards(ArrayList<Card> discardedCards) {
 		appContext.renderFrame( graphics -> {
 			int x=(int) (width/2), y=(int) ( height * 14 / 20 );
-			graphics.setColor(Color.BLACK);
 			drawDeck(graphics, discardedCards, x, y, true);
 		});
 	
@@ -113,13 +138,13 @@ public class GraphicalView implements View {
 	@Override
 	public void displayCardsOfPlayer(ArrayList<Player> players , Player playerNotToDisplay) {
 		appContext.renderFrame( graphics -> {
-			int x= 15, y= 15 ;
+			int x = marginHorizontal/2, y= marginVertical ;
 			for(Player player : players) {
 				if( !player.equals(playerNotToDisplay)) {
-					graphics.setColor(Color.RED);
+					graphics.setColor(Color.PINK);
+					graphics.setFont( font );
 					graphics.drawString( player.toString(), x + (playerSpaceWidth/2), y );
-					graphics.setColor(Color.RED);
-					drawDeck(graphics, player.getCards(), x, y+15, true);
+					drawDeck(graphics, player.getCards(), x, y+(marginVertical/2), true);
 					y += playerSpaceHeight;
 				}
 			}
@@ -129,12 +154,12 @@ public class GraphicalView implements View {
 	@Override
 	public void displayOwnCards(ArrayList<Card> cards) {
 		appContext.renderFrame( graphics -> {
-			int x=15, y=(int) ( height * 4/5 );
-			graphics.setColor(Color.BLACK);
-			y += 30; 
-			graphics.setColor(Color.GREEN);
-			graphics.drawString( " Vous " , x + (playerSpaceWidth/2), y );
-			drawDeck(graphics, cards, x, y+15, false);
+			int x = playerSpaceWidth + marginHorizontal/2, y=(int) ( height * 4/5 );
+			y += marginVertical; 
+			graphics.setFont( font );
+			graphics.setColor( Color.ORANGE );
+			graphics.drawString( " Vous " , width/2  , y );
+			drawDeck(graphics, cards, x, y+(marginVertical/2), false);
 		}); 
 	}
 
@@ -158,9 +183,9 @@ public class GraphicalView implements View {
 
 	@Override
 	public void displayDefeat() {
-		StringBuilder stringBuilder = new StringBuilder("DEFAITE\n");
+		StringBuilder stringBuilder = new StringBuilder("DEFAITE"+ System.lineSeparator() );
 		stringBuilder.append("Vous avez perdu tout vos jetons rouge !");
-		printString(stringBuilder.toString());
+		printString( stringBuilder.toString() );
 	}
 	
 	private void clearWindow() {
@@ -171,45 +196,55 @@ public class GraphicalView implements View {
 	}
 	
 	private void drawDeck( Graphics2D graphics, ArrayList<Card> cards , int x, int y, boolean showCards ) {
-		int i = 30;
+		int i = marginHorizontal;
 		int count=1 ;
 		for( Card card : cards) {
-			graphics.setColor(Color.RED);
 			if( showCards ) {
-				graphics.setColor(Color.RED);
-				drawCard( graphics, card.getColor(), card.getNumber(), x + i, y );
+				drawCard( graphics, colors.get( card.getColor() ), card.getNumber(), x + i, y );
 			} else {
-				graphics.setColor(Color.BLACK);
-				graphics.drawRect( x+i, (4*height/5)+y, cardSize, cardSize);
-				graphics.drawString( String.valueOf(count) , x+i, y+(cardSize/2) );
+				drawCard( graphics, Color.BLACK, count, x + i, y );
 			}
-			i += cardSize+30; 
+			i += cardSize+marginHorizontal; 
 			count++;
 		}
 	}
 	
-	private void drawCard(Graphics2D graphics, CardColor color, int numberCard, int x, int y ) {
-		graphics.setColor( Color.BLACK );
-
+	private void drawCard(Graphics2D graphics, Color color, int numberCard, int x, int y ) {
+		graphics.setColor( Color.WHITE );
+		graphics.fillRect( x, y, cardSize, cardSize);
+		
+		graphics.setColor( color );
 		graphics.fillRect( x, y, cardSize, 10);
 		graphics.fillRect( x + cardSize - 10, y, 10, cardSize );
 		graphics.fillRect( x, y + cardSize - 10, cardSize , 10);
 		graphics.fillRect( x, y, 10, cardSize );
 		
+		graphics.setFont( font );
 		graphics.drawString( String.valueOf( numberCard ), x + (cardSize/2) , y + (cardSize/2));
 	}
 
 	public void prepareBoard() {
 		clearWindow();
 		appContext.renderFrame( graphics -> {
-			graphics.setColor(Color.DARK_GRAY);
-			graphics.fillRect(0 , (4*height/5), width, 6);
-			graphics.fillRect(width/3 + 30, 0, 6, 4*height/5 );
+			graphics.setColor(Color.LIGHT_GRAY);
+			
+			/* Horizontal line */
+			graphics.fillRect(0 , 6*height/10, (width/3)+marginHorizontal, 3);
+			
+			/* Vertical line */
+			graphics.fillRect(width/3 + marginHorizontal, 0, 6, height );
 		});
 	}
 
 	public void displayIntel(String string) {
-		
+		appContext.renderFrame( graphics -> {
+			int y = (int) (6*height/10) + 2*marginVertical;
+			graphics.setColor( Color.WHITE );
+			graphics.setFont( font );
+			for (String newLine : string.split( System.lineSeparator() )) {
+				graphics.drawString( newLine, marginHorizontal, y += graphics.getFontMetrics().getHeight() );
+			}
+		});
 	}
 
 	public void displayDepletedInfoTokens() {

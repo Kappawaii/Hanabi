@@ -158,7 +158,7 @@ public class Hanabi {
 				players.add(temp);
 				i++;
 			} else {
-				view.printString("Le joueur existe d√©j√†, veuillez choisir un autre nom");
+				view.printString("Le joueur existe dÈj‡†, veuillez choisir un autre nom");
 			}
 		}
 	}
@@ -169,6 +169,7 @@ public class Hanabi {
 	 */
 	private void displayCardsOfAllPlayersBut(Player playerNotToDisplay) {
 		ArrayList<Player> players = game.getPlayerList();
+		// Remove null
 		GUIview.displayCardsOfPlayer( players , playerNotToDisplay );
 		view.displayCardsOfPlayer( players , playerNotToDisplay);
 	}
